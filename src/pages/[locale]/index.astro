@@ -1,0 +1,57 @@
+---
+import type { IndexEntry } from "@/content.config";
+import { getEntry } from "astro:content";
+import { locales } from "@/i18n/translations.ts";
+import { useTranslations } from "@utils/utils.ts";
+import Layout from "@layouts/Layout.astro";
+import Hero from "@components/Hero.astro";
+
+const { locale = "en" } = Astro.params;
+const page = locales.find((localeObj) => localeObj.code === locale);
+if (!page) return Astro.redirect("/404");
+
+const { t } = useTranslations(locale);
+
+const greeting: IndexEntry = await getEntry(
+    "index",
+    `${locale}/index/greeting`,
+)!;
+---
+
+<Layout
+    title={t("site.title")}
+    description={t("site.description")}
+    prompt={t("home.prompt")}
+    image="/images/opengraph/index.png"
+    breadcrumbs={greeting.data.featuredPaths}
+    locale={locale}
+>
+    <div class="container">
+        <Hero
+            title={greeting.data.title}
+            subtitle={greeting.data.subtitle!}
+            description={greeting.data.description!}
+            featuredPaths={greeting.data.featuredPaths!.map(
+                (path) => path.path,
+            )}
+            locale={locale}
+        />
+    </div>
+</Layout>
+
+<style>
+    .terminal-content {
+        min-height: unset;
+    }
+
+    .container {
+        padding: 0rem 1rem;
+        opacity: 0.7;
+    }
+
+    @media (min-width: 880px) {
+        .container {
+            max-width: 60rem;
+        }
+    }
+</style>

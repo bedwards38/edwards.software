@@ -1,0 +1,41 @@
+---
+slug: de/projects/linter
+featured: false
+title: ASM Java Linter
+description: <strong>Fehler aufdecken und Ihren Code verbessern – Zeile für Zeile.</strong><br><br>Ein Linter für Java-Projekte, der auf dem ASM-Bytecode-Manipulations-Framework basiert.
+releaseDate: 2023-02
+tech:
+  - Java
+  - Gradle
+  - GitHub CI
+  - Java Swing
+---
+## ASM Java Linter
+*Completed: Feb 2023, Feb 2024*
+
+Ich arbeitete mit zwei separaten Teams zusammen, um im Rahmen der Kurse „Software Design“ sowie „Software Construction & Evolution“ am RHIT einen Java-Projekt-Linter zu entwickeln, der auf dem ASM-Bytecode-Manipulations-Framework basiert.
+
+> Bitte kontaktieren Sie mich direkt, um Code-Ausschnitte aus diesem Projekt zu erhalten. Ich kann dieses Repository nicht öffentlich auf meinem GitHub-Profil anzeigen, da es sich um ein Kursprojekt im Fachbereich CSSE am RHIT handelte.
+
+### Design
+Diese Anwendung wurde in Java unter Verwendung von Gradle und GitHub CI entwickelt.
+
+Der ASM Java Linter führte beim Linting eines Projekts zahlreiche konfigurierbare „Prüfen“ durch – von der Erkennung von Code Smells bis hin zur Identifizierung gängiger Design-Patterns.
+
+#### Prüfen
+- Dummy-Datenklasse
+- Redundante Schnittstellen
+- Kein Finalizer
+- Schlechte Namenskonventionen
+- Prinzip der einzigen Verantwortung
+- Hollywood-Prinzip
+- Equals und Hash Code
+- Verletzung der Informationsverbergung
+
+#### PMusterdetektoren
+- Singleton-Muster
+- Strategie-Muster
+- Decorator-Muster
+
+UIm Gegensatz zu typischen Lintern enthielt die endgültige Version des ASM Java Linter eine GUI, die auf Basis von Java Swing realisiert wurde. Dies ermöglichte es den Benutzern, auf einfache Weise zu konfigurieren, welche „Prüfungen“ an einem Projekt durchgeführt werden sollten.
+Der Linter umfasste zudem einen UML-Generator. War dieser aktiviert, erstellte der Generator ein UML-Diagramm, das den aktuellen Zustand des geprüften Projekts abbildete.

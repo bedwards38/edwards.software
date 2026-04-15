@@ -1,0 +1,143 @@
+---
+import { useTranslations } from "@utils/utils.ts";
+import { locales } from "@/i18n/translations.ts";
+import TranslateIcon from "@icons/TranslateIcon.astro";
+
+const { locale = "en", ...props } = Astro.props;
+const { t } = useTranslations(locale);
+---
+
+<div class="select-container">
+    <div
+        id="locale-switch"
+        aria-label={t("button.switch.locale")}
+        title={t("button.switch.locale")}
+        {...props}
+    >
+        <TranslateIcon />
+    </div>
+    <div id="locale-options" class="options-container">
+        <div class="options-title">
+            <span class="mono">{t("button.switch.locale")}</span>
+        </div>
+        {
+            locales &&
+                locales.map((definedLocale) => (
+                    <div class="option">
+                        <span
+                            data-value={definedLocale.code}
+                            class={`option-text mono ${definedLocale.code === locale ? "active-locale" : ""}`}
+                        >
+                            {t(
+                                // @ts-expect-error
+                                `locale.label.${definedLocale.lang.toLocaleLowerCase()}`,
+                            )}
+                        </span>
+                    </div>
+                ))
+        }
+    </div>
+</div>
+
+<style>
+    #locale-switch {
+        display: flex;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: var(--text);
+    }
+
+    #locale-switch:hover,
+    #locale-switch.active {
+        transform: translateY(-2px);
+    }
+
+    .options-container {
+        display: none;
+        flex-direction: column;
+        gap: 0.5rem;
+        position: absolute;
+        margin-top: 1rem;
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 0.3125rem;
+        padding: 1rem;
+        z-index: 100;
+        right: 1.5rem;
+    }
+
+    .options-title {
+        color: var(--text);
+        opacity: 0.4;
+    }
+
+    .option {
+        border: 1px solid var(--border);
+        border-radius: 0.3125rem;
+        padding: 0.5rem;
+    }
+
+    .option-text {
+        color: var(--text);
+        opacity: 0.2;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .option-text.active-locale {
+        opacity: 0.4;
+    }
+
+    .option-text:hover {
+        transition: opacity 0.3s;
+        opacity: 0.4;
+    }
+
+    .option-text.active-locale {
+        cursor: default;
+    }
+
+    @media (min-width: 880px) {
+        .options-container {
+            right: auto;
+        }
+    }
+</style>
+<script>
+    document.addEventListener("astro:page-load", () => {
+        const localeSwitch: HTMLElement =
+            document.getElementById("locale-switch")!;
+        const container: HTMLElement =
+            document.getElementById("locale-options")!;
+        const options: NodeList = document.querySelectorAll(".option")!;
+        const activeLocale: HTMLElement = document.querySelector(
+            ".option-text.active-locale",
+        )!;
+
+        localeSwitch.addEventListener("click", () => {
+            const isVisible =
+                container.style.display && container.style.display !== "none";
+            container.style.display = isVisible ? "none" : "flex";
+            localeSwitch.classList.toggle("active");
+        });
+
+        options.forEach((option) => {
+            option.addEventListener("click", (event) => {
+                const optionText: HTMLElement = (
+                    event?.currentTarget as HTMLElement
+                ).firstElementChild! as HTMLElement;
+
+                if (!optionText || optionText === activeLocale) return;
+
+                const path = window.location.href;
+                const locale = activeLocale.dataset.value;
+                const altLocale = optionText.dataset.value;
+
+                window.location.href = path.replace(
+                    `/${locale}`,
+                    `/${altLocale}`,
+                );
+            });
+        });
+    });
+</script>

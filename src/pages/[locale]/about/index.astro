@@ -1,0 +1,201 @@
+---
+import type { AboutEntry, ImageSchema } from "@/content.config";
+import { getEntry } from "astro:content";
+import { locales } from "@/i18n/translations.ts";
+import { useTranslations } from "@utils/utils.ts";
+import Layout from "@layouts/Layout.astro";
+import Card from "@components/Card.astro";
+
+const { locale = "en" } = Astro.params;
+const page = locales.find((localeObj) => localeObj.code === locale);
+if (!page) return Astro.redirect("/404");
+
+const { t } = useTranslations(locale);
+
+const aboutMe: AboutEntry = await getEntry("about", `${locale}/about/me`)!;
+const education: AboutEntry = await getEntry(
+    "about",
+    `${locale}/about/education`,
+)!;
+---
+
+<Layout
+    title={`${t("site.about.title")} | ${t("site.title")}`}
+    description={t("site.about.description")}
+    prompt={t("page.about.prompt")}
+    image="/images/opengraph/about.png"
+    breadcrumbs={[
+        {
+            path: `/${locale}/about/education`,
+            name: education.data.title,
+        },
+    ]}
+    locale={locale}
+    prevPath={`/${locale}`}
+>
+    <div class="about-container">
+        <section class="about-me">
+            <div class="container">
+                <div class="about-header">
+                    <div class="section-title">
+                        <h2
+                            class="typewriter cursor"
+                            data-content={t("page.about.title")}
+                        >
+                        </h2>
+                    </div>
+                </div>
+                <div class="about-grid">
+                    <div class="about-text">
+                        <Card
+                            featured={aboutMe.data.featured}
+                            subtitle={aboutMe.data.description}
+                            locale={locale}
+                        />
+                    </div>
+                    <div class="about-image-grid fade-in">
+                        {
+                            aboutMe.data.images &&
+                                aboutMe.data.images.map(
+                                    (image: ImageSchema) => (
+                                        <img
+                                            class="about-image"
+                                            src={image.src}
+                                            alt={image.alt}
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                    ),
+                                )
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="about-education fade-in">
+            <div class="container">
+                <div class="education-header">
+                    <div class="section-title">
+                        <h3
+                            class="education-title typewriter"
+                            data-content={t("page.about.education.title")}
+                        >
+                        </h3>
+                    </div>
+                </div>
+                <Card
+                    featured={education.data.featured}
+                    title={education.data.title}
+                    subtitle={education.data.description}
+                    tags={education.data.highlights}
+                    link={education.data.link}
+                    entry={education}
+                    locale={locale}
+                />
+            </div>
+        </section>
+    </div>
+</Layout>
+
+<style>
+    .about-me {
+        padding: 0rem 0;
+    }
+
+    .about-header {
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+    }
+
+    .section-title {
+        margin-bottom: unset;
+        width: fit-content;
+    }
+
+    .about-grid {
+        display: grid;
+        gap: 2rem;
+        margin-top: 1rem;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "images"
+            "content";
+    }
+
+    .about-text {
+        grid-area: content;
+        opacity: 0.7;
+    }
+
+    .about-image-grid {
+        grid-area: images;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        align-content: center;
+    }
+
+    .about-image {
+        border: 2px solid var(--border);
+        border-radius: 0.625rem;
+        max-width: 100%;
+        box-shadow: 3px 3px 5px rgb(from var(--accent) r g b / 15%);
+        opacity: 0.8;
+    }
+
+    [data-theme="dark"] .about-image {
+        box-shadow: none;
+    }
+
+    .about-image:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .about-education {
+        padding: 4rem 0rem 0rem 0rem;
+        min-height: unset;
+        margin-bottom: 1rem;
+    }
+
+    .about-education .container {
+        opacity: 0.7;
+    }
+
+    .education-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @media (min-width: 880px) {
+        .card {
+            text-align: justify;
+        }
+
+        .about-header {
+            margin-top: 2rem;
+        }
+    }
+
+    @media (width >= 510px) and (width <= 1276px) {
+        .about-grid {
+            grid-template-areas:
+                "content"
+                "images";
+        }
+    }
+
+    @media (width >= 1276px) {
+        .about-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-areas: "content images";
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) .about-image {
+            box-shadow: none;
+        }
+    }
+</style>

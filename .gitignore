@@ -1,0 +1,21 @@
+# build output
+dist/
+.output/
+.wrangler/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

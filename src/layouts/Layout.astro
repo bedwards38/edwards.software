@@ -1,0 +1,231 @@
+---
+/*
+    MIT License
+
+    Copyright (c) 2026 edwards.software, 2025 686f6c61
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+import { Font } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
+import { env } from "cloudflare:workers";
+import { locales } from "@/i18n/translations.ts";
+import { getLocaleName, useTranslations } from "@utils/utils.ts";
+import Footer from "@components/Footer.astro";
+import TerminalLayout from "@layouts/TerminalLayout.astro";
+
+interface AlternatePage {
+    url: string;
+    locale: string;
+}
+
+interface Breadcrumb {
+    path: string;
+    name: string;
+}
+
+interface Props {
+    title?: string;
+    prompt?: string;
+    description?: string;
+    locale?: string;
+    image?: string;
+    breadcrumbs?: Breadcrumb[];
+    prevPath?: string;
+}
+
+const {
+    title,
+    description,
+    prompt,
+    breadcrumbs,
+    prevPath,
+    locale = "en",
+    image = "/images/opengraph/404.png",
+    ...props
+} = Astro.props;
+
+const { t } = useTranslations(locale);
+const currentPath = Astro.url.pathname;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const currentLocale = locales.find(
+    (definedLocale) => definedLocale.code === locale,
+);
+const alternateLocales = locales.filter(
+    (altLocale) => altLocale.code !== locale,
+);
+const alternateURLs: AlternatePage[] = alternateLocales.map((altLocale) => {
+    return {
+        url: new URL(
+            currentPath.replace(`/${locale}`, `/${altLocale.code}`),
+            Astro.site,
+        ).href,
+        locale: altLocale.code,
+    };
+});
+
+const ogImage = new URL(image, Astro.site);
+const linkedData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    url: Astro.url?.toString(),
+    image: ogImage.toString(),
+    description: description,
+    breadcrumb: {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { path: `/${locale}`, name: "~/" },
+            breadcrumbs?.map((breadcrumb) => {
+                return {
+                    "@id": new URL(breadcrumb.path, Astro.site).href,
+                    name: breadcrumb.name,
+                };
+            }),
+        ],
+    },
+    inLanguage: {
+        "@context": "https://schema.org",
+        "@type": "Language",
+        name: getLocaleName(locale),
+        alternateName: locale,
+    },
+    copyrightNotice: t("footer.copyright").replace(/\s\{year\}\s/g, " "),
+    copyrightYear: new Date().getFullYear().toString(),
+    author: {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: "Braedyn Edwards",
+        sameAs: [env.GITHUB_URL, env.LINKEDIN_URL],
+        jobTitle: "Consultant",
+        knowsAbout: [
+            "Full Stack Software Development",
+            "Microservice Design",
+            "Software Architecture",
+            "Web Development",
+            "Spring Boot",
+            "Astro",
+            "Next.js",
+            "PostgreSQL",
+            "GraphQL",
+            "Docker",
+            "Node.js",
+            "React",
+            "Svelte",
+        ],
+    },
+};
+---
+
+<!doctype html>
+<html lang={locale}>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+        <meta name="title" content={title} />
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalURL} />
+        {
+            alternateURLs &&
+                alternateURLs.map((altURL) => (
+                    <link
+                        rel="alternate"
+                        hreflang={altURL.locale}
+                        href={altURL.url}
+                    />
+                ))
+        }
+        <link rel="alternate" hreflang="x-default" href={Astro.site} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:site_name" content={t("site.title")} />
+        <meta property="og:locale" content={currentLocale?.openGraph} />
+        {
+            alternateLocales &&
+                alternateLocales.map((altLocale) => (
+                    <meta
+                        property="og:locale:alternate"
+                        content={altLocale.openGraph}
+                    />
+                ))
+        }
+        <meta name="apple-mobile-web-app-title" content="edwards.software" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/favicons/apple-touch-icon.png"
+        />
+        <link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />
+        <link
+            rel="icon"
+            type="image/png"
+            href="/favicons/favicon-96x96.png"
+            sizes="96x96"
+        />
+        <link rel="shortcut icon" href="/favicons/favicon.ico" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <script
+            is:inline
+            type="application/ld+json"
+            set:html={JSON.stringify(linkedData)}
+        />
+        <Font cssVariable="--mono" />
+        <ClientRouter />
+    </head>
+
+    <body>
+        <TerminalLayout
+            title={title}
+            prompt={prompt}
+            locale={locale}
+            prevPath={prevPath}
+            {...props}
+        >
+            <slot />
+        </TerminalLayout>
+        <Footer locale={locale} />
+        <slot name="modal-slot" />
+    </body><style is:global>
+        @import "@styles/template.css";
+        @import "@styles/global.css";
+    </style>
+    <script>
+        import { typewriter } from "@utils/utils";
+
+        document.addEventListener("astro:page-load", () => {
+            const typewriterContent = document.querySelectorAll(".typewriter");
+
+            typewriterContent.forEach((content: Element) => {
+                typewriter(content as HTMLElement, 0);
+            });
+        });
+
+        document.addEventListener("astro:before-swap", () => {
+            localStorage.setItem("prevUri", document.location.pathname);
+        });
+    </script>
+</html>

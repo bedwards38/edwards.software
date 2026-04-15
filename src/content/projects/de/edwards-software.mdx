@@ -1,0 +1,43 @@
+---
+slug: de/projects/edwards-software
+featured: true
+title: edwards.software
+description: <strong>Die Website, auf der Sie sich gerade befinden</strong><br><br>
+releaseDate: 2026-04
+repo: https://github.com/bedwards38/edwards-software
+tech:
+- Astro.js
+- pnpm
+- TypeScript
+- Cloudflare
+---
+import Subtitle from "@components/content/Subtitle.astro";
+
+## edwards.software
+<Subtitle content="Veröffentlicht: Apr 2026" repo={frontmatter.repo} />
+
+Die Website, auf der Sie sich gerade befinden, dient als mein „Portfolio“, „Lebenslauf“, „ausführliches Profil“ – oder wie auch immer Sie es nennen möchten. Kurz gesagt: Ich wollte einfach einen Ort schaffen, an dem ich meine persönlichen Projekte und meine berufliche Erfahrung all jenen präsentieren kann, die daran interessiert sein könnten – sei es Familie, Freunde, Kollegen, Personalvermittler, Personalverantwortliche oder wer auch immer; Sie verstehen schon, worauf ich hinauswill.
+
+### Aktuelles Design
+Diese Website wurde mit Astro 6 und TypeScript erstellt und wird auf Cloudflare gehostet. Da ich eine Schwäche für gute Terminal-Emulatoren habe -- hier spricht ein Arch-Linux-Nutzer -- habe ich die Seite so gestaltet, dass sie optisch ein Terminal bzw. eine Kommandozeilen-Oberfläche nachahmt.
+
+Um die Entwicklung zu beschleunigen, entschied ich mich dazu, die Website auf der Grundlage eines von <a href="https://github.com/686f6c61/Portfolio-Astro-Template/tree/6313417a73d5e35fa03335080cc6e1988496cc03">686f6c61 entworfenen Templates zu erstellen</a>. Optisch kam es dem, was ich mir für mein Portfolio vorstellte, recht nahe, weshalb ich das Gefühl hatte, es sei die richtige Wahl. Doch schon kurz nach Beginn der Entwicklung stellte ich fest, dass es nicht darauf ausgelegt war, in dem Maße anpassbar zu sein, wie ich es mir erhofft hatte (ohne dabei 686f6c61 zu nahe treten zu wollen – schließlich unterscheiden sich Programmierstile und Vorlieben unter Entwicklern oft erheblich).
+
+Um das visuelle Design zu realisieren, das Sie heute sehen, habe ich den gesamten Quellcode des Templates neu geschrieben. Zum Zeitpunkt der Veröffentlichung sind auf dieser Website nur noch sehr wenige Elemente des ursprünglichen Templates erkennbar; dennoch halte ich es für wichtig, dem ursprünglichen Ersteller des Templates für seine Arbeit weiterhin die entsprechende Würdigung zukommen zu lassen.
+
+Ich habe das interne Design grundlegend überarbeitet, um es besser an die Standards anzupassen, die ich typischerweise an meine Projekte stelle: hohe Wartbarkeit, leichte Verständlichkeit und Konformität mit modernen Designphilosophien.
+
+Zu den hervorzuhebenden spezifischen Änderungen gehören:
+- Komponentenbasiertes Design
+- Mobile-First- / Responsive-Styling
+- Markdown-basierte Inhaltsspezifikation
+- Erweiterte, vom Terminal inspirierte Designsprache
+ 
+### Hintergrund
+Technisch gesehen hat dieses Projekt seit Anfang 2022 zahlreiche Iterationen durchlaufen. Zu einem früheren Zeitpunkt erstellte ich einen „funktionalen“ Prototyp eines Portfolios, wobei ich ausschließlich auf reines HTML, CSS und JS setzte – ganz ohne Frameworks; ich nutzte lediglich jene Technologien, die Websites der 90er- und frühen 2000er-Jahre so geschmeidig laufen ließen wie einen Mercury Sable aus dem Jahr 2002.
+
+In meinem letzten Studienjahr wollte ich mich im Rahmen meines Abschlussprojekts stärker mit dem aktuellen Stand der modernen Webentwicklung vertraut machen. Ich verwarf mein ursprüngliches Design, entschied mich für ein Open-Source-Template, um Zeit zu sparen, und baute ein durchaus funktionales Portfolio auf – unter Verwendung von React, Next.js und Tailwind CSS. Ich veröffentlichte die Website sogar über Vercel unter einer kostenlosen Domain; dennoch fühlte sie sich für mich nie wirklich vollendet an.
+
+Gegen Ende jenes Schuljahres entdeckte ich <a href="https://astro.build">Astro</a> – ein neues, aufstrebendes Framework, das auf kleinere Websites wie das Portfolio ausgerichtet ist, das ich erstellen wollte. Ich war schnell Feuer und Flamme und baute meine Website (wenn auch eher stümperhaft) mithilfe von Astros React-Integration neu auf. Dabei ruinierte ich etliche Dinge, die ich an der ursprünglich gewählten Vorlage eigentlich sehr geschätzt hatte, und redete mir ein, ich würde mich später um die Reparatur kümmern... doch wir alle wissen ja, wie so etwas meistens ausgeht. Immerhin schaffte ich es etwa ein Jahr später – im Jahr 2025 –, mir die Domain <i>edwards.software</i> zu sichern.
+
+Anfang 2026 beschloss ich, dass es an der Zeit war, meinen Kram auf die Reihe zu kriegen (mangels eines besseren Ausdrucks). Mir wurde klar, dass die meisten Dinge, die ich am ersten Template für „cool“ hielt, für eine schlichte Portfolio-Website eigentlich gar nicht die beste Wahl waren. Ich recherchierte ausgiebig zu verschiedenen Frameworks und wog einige Optionen gegeneinander ab, bevor ich mich schließlich doch wieder für Astro entschied (hauptsächlich aufgrund meiner Vorerfahrung beim Entwickeln funktionaler Astro-Anwendungen – auch wenn ich kurz davor stand, Svelte zu wählen). Womöglich werde ich die Seite nun doch noch mit SvelteKit neu aufsetzen, da ich endlich eine funktionierende und veröffentlichte Website habe... bleibt dran!

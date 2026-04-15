@@ -1,0 +1,60 @@
+---
+slug: en/projects/indigo-prototype
+featured: false
+prototype: true
+title: Indigo Park Website
+description: <strong>A digital hub where the mysterious world of <i>Indigo Park</i> comes alive</strong><br><br>The unofficial, conceptual prototype website made in collaboration with the game's creator
+releaseDate: 2024-03
+repo: https://github.com/bedwards38/indigo_park_website_prototype
+tech:
+  - Astro.js
+  - Tailwind CSS
+  - pnpm
+  - TypeScript
+images: 
+  - src: /images/projects/indigo-park-prototype/home.png
+    alt: "" 
+    caption: Home page for the prototype
+  - src: /images/projects/indigo-park-prototype/home-cont.png
+    alt: "" 
+    caption: Home page for the prototype (continued)
+  - src: /images/projects/indigo-park-prototype/discover.png
+    alt: "" 
+    caption: Overview page for the game's levels/areas
+  - src: /images/projects/indigo-park-prototype/discover-area.png
+    alt: "" 
+    caption: Overview page for the one of the game's levels/areas
+  - src: /images/projects/indigo-park-prototype/characters.png
+    alt: "" 
+    caption: Overview page for the game's cast of characters
+  - src: /images/projects/indigo-park-prototype/character-bio.png
+    alt: "" 
+    caption: Bio page for the game's main character
+  
+---
+import Subtitle from "@components/content/Subtitle.astro";
+
+## Indigo Park Website
+<Subtitle content="Completed: Mar 2024" repo={frontmatter.repo} images={frontmatter.images} galleryTitle={frontmatter.title}/>
+
+This was a proof-of-concept (POC), made in collaboration with the creator of <a href="https://store.steampowered.com/app/2504480/Indigo_Park_Chapter_1/">*Indigo Park*</a> a few months before the game's initial release. 
+
+> Since this is an archived POC, there is no published demo to explore. Feel free to check out images from the POC or the codebase, instead!  
+
+### Design
+The site and its design was custom built using Astro 4, Tailwind CSS, Typescript. 
+
+Indigo Park's story is based at an abandoned amusement park, so the creator's vision was to have a site designed like it was for an amusement park from the early 2000s. Fortunately for me, the creator is a graphic designer, so he had already created a Figma mock to base the design on. 
+
+As this project was initially intended to help me figure out Astro, I developed rather quickly and took some non-standard approaches when first implementing the design (i.e. hard-coded values, non-responsive elements, etc.). This "tech-debt" was intended to be fixed as the project moved from a POC to a more finalized, production-ready state.
+
+### Background
+During my senior year of college, I had been looking for a small side project to do familiarize myself with this new framework I read about: <a href="https://astro.build">*Astro*</a>. Around the same time, I was talking to a long-time friend who was working on a small PC indie horror game: *Indigo Park*. He was interested in getting a website created so that he could both increase awareness about the game's upcoming release, and share game lore with fans. I thought the opportunity couldn't have been better.
+
+I put my head down and quickly got to work building a functional POC that was complete within a week. After reviewing the POC, we both felt like it had achieved the initial vision for the site, so we began to ideate future features and potential tie-ins we could make to the game's story. 
+ 
+Upon some further consideration, we made the collective decision to table the project until after the game's initial release. We were both near completing our degress, and with the scope the creator was envisioning, we knew I wouldn't be able to dedicate the necessary effort to the project without sacrificing academic performance.
+
+Once we both had graduated college and the game had released to a huge success, we discussed the future of the POC and concluded that it should be archived. The creator ultimately made the wise decision to partner with <a href="https://culturefly.com">CultureFly</a> for the **<a href="https://indigopark.shop">official *Indigo Park* website</a>**. 
+
+Though the project was never realized to its full potential, I'm proud of the work we were able to achieve together in a rather short amount of time.

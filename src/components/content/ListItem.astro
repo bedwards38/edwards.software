@@ -1,0 +1,28 @@
+---
+const props = Astro.props;
+---
+
+<li {...props}><slot /></li>
+
+<style>
+    li {
+        max-width: 113ch; /* -2 from typical max-width to account for bullet and space */
+        margin-left: 1rem;
+        margin-bottom: 0.75rem;
+        list-style: square outside;
+    }
+
+    li:last-child {
+        margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        li:last-child {
+            margin-bottom: 1.25rem;
+        }
+    }
+</style>

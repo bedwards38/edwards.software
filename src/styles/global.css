@@ -1,0 +1,39 @@
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+body:has(dialog[open]) {
+    overflow: hidden;
+    scrollbar-gutter: stable both-edges;
+}
+
+.typewriter {
+    text-wrap: wrap;
+}
+
+.cursor::after {
+    content: "_";
+    animation: 1.75s blink infinite step-end;
+}
+
+@keyframes blink {
+    0%,
+    50% {
+        opacity: 1;
+    }
+    51%,
+    100% {
+        opacity: 0;
+    }
+}

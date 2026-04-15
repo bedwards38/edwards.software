@@ -1,0 +1,25 @@
+{
+  "compatibility_date": "2026-04-14",
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "name": "edwards-software",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "routes": [
+    {
+      "pattern": "edwards.software",
+      "custom_domain": true,
+    },
+  ],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+  },
+  "observability": {
+    "enabled": true,
+  },
+  "vars": {
+    "GITHUB_URL": "https://github.com/bedwards38",
+    "LINKEDIN_URL": "https://www.linkedin.com/in/braedyn-edwards-035671b5",
+    "CONTACT_EMAIL": "braedyn@edwards.software",
+  },
+}

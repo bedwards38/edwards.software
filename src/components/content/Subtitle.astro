@@ -1,0 +1,47 @@
+---
+import ButtonGroup from "./ButtonGroup.astro";
+
+const { content, link, repo, demo, images, galleryTitle, ...props } =
+    Astro.props;
+---
+
+<div class="subtitle-container" {...props}>
+    <p><em>{content}</em></p>
+    <ButtonGroup
+        link={link}
+        repo={repo}
+        demo={demo}
+        images={images}
+        galleryTitle={galleryTitle}
+    />
+</div>
+
+<style>
+    .subtitle-container {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 1rem;
+        width: 100%;
+    }
+
+    .btn-group {
+        justify-content: end;
+        padding-bottom: unset;
+    }
+
+    @media (min-width: 880px) {
+        .subtitle-container {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .subtitle-container p {
+            margin-bottom: unset;
+        }
+
+        .btn-group {
+            max-width: 50%;
+        }
+    }
+</style>

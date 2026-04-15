@@ -1,0 +1,208 @@
+---
+/*
+    MIT License
+
+    Copyright (c) 2026 edwards.software, 2025 686f6c61
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+import { useTranslations } from "@utils/utils.ts";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+    filters: string[];
+    filterCommand?: string;
+    locale?: string;
+}
+
+const { filterCommand, filters, locale = "en", ...props } = Astro.props;
+
+const { t } = useTranslations(locale);
+---
+
+<div id="toggle-container" {...props}>
+    <button class="mono" id="filter-toggle">
+        <span class="command">
+            <span id="command-text">
+                {filterCommand}<span id="filter-item"></span><span
+                    class="cursor"></span>
+            </span>
+        </span>
+    </button>
+</div>
+<div
+    class="filter-container fade-in"
+    id="filter-container"
+    style="display: none;"
+>
+    <button class="filter-btn active mono" data-filter="all">
+        {t("card.filter.all")}
+    </button>
+    {
+        filters
+            .sort((a, b) => a.localeCompare(b, locale, { sensitivity: "base" }))
+            .map((filter) => (
+                <button class="filter-btn mono" data-filter={filter}>
+                    {filter}
+                </button>
+            ))
+    }
+</div>
+<script>
+    import { reverseTypewriter } from "@utils/utils";
+
+    document.addEventListener("astro:page-load", () => {
+        const filterContainer = document.getElementById("filter-container")!;
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        const filterToggle = document.getElementById("filter-toggle")!;
+        const filterItem = document.getElementById("filter-item")!;
+        const cards = document.querySelectorAll(".card");
+
+        filterToggle?.addEventListener("click", () => {
+            const isVisible = filterContainer?.style.display !== "none";
+
+            if (!isVisible) {
+                filterContainer.style.display = "grid";
+                filterToggle.classList.toggle("active");
+                return;
+            }
+
+            filterContainer.classList.toggle("fade-out");
+            filterContainer.addEventListener(
+                "animationend",
+                () => {
+                    filterContainer.style.display = "none";
+                    filterContainer.classList.toggle("fade-out");
+                },
+                { once: true },
+            );
+        });
+
+        filterButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const filter = button.getAttribute("data-filter")!;
+
+                filterButtons.forEach((btn) => btn.classList.remove("active"));
+                button.classList.add("active");
+
+                filterItem.dataset.reverse = filterItem.innerText;
+                filterItem.dataset.content = filter !== "all" ? filter : "";
+                reverseTypewriter(filterItem, filterItem.innerText.length - 1);
+
+                cards.forEach((card, index) => {
+                    card.classList.remove("highlight");
+                    card.classList.add("hidden");
+
+                    if (filter === "all") {
+                        card.classList.remove("hidden");
+                        if (index === 0) card.classList.add("highlight");
+                    } else {
+                        const cardTechs =
+                            card.getAttribute("data-tags")?.split(",") || [];
+                        if (cardTechs.includes(filter)) {
+                            card.classList.remove("hidden");
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script>
+<style>
+    #toggle-container button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: fit-content;
+        color: var(--text);
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 0.3125rem;
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: var(--mono);
+        font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+    }
+
+    #toggle-container button:hover {
+        border-color: var(--text);
+        transform: translateY(-2px);
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgb(from var(--text) r g b / 5%) 100%
+        );
+    }
+
+    #toggle-container .command {
+        color: var(--text);
+        display: flex;
+    }
+
+    #toggle-container .cursor {
+        display: inline-block;
+        opacity: 0.8;
+    }
+
+    .filter-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        grid-auto-rows: auto;
+        gap: 0.5rem;
+        padding: 1rem;
+        margin: 1rem 0rem 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 0.3125rem;
+        background: rgb(from var(--text) r g b / 2%);
+        min-width: 100%;
+    }
+
+    .filter-btn {
+        background: transparent;
+        border: none;
+        border-radius: 0.3125rem;
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        padding: 0.4rem 0.5rem;
+        opacity: 0.7;
+        word-wrap: break-word;
+        line-height: 1.3;
+    }
+
+    .filter-btn:hover {
+        opacity: 1;
+        background: rgb(from var(--text) r g b / 5%);
+    }
+
+    .filter-btn.active {
+        opacity: 1;
+        color: var(--text);
+        text-decoration: underline;
+    }
+
+    @media (min-width: 768px) {
+        #toggle-container {
+            margin-bottom: 0.5rem;
+        }
+    }
+</style>

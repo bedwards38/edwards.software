@@ -1,0 +1,347 @@
+---
+/*
+    MIT License
+
+    Copyright (c) 2026 edwards.software, 2025 686f6c61
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+import type { ImageSchema } from "@/content.config";
+import { useTranslations } from "@utils/utils.ts";
+import DialogLayout from "@layouts/DialogLayout.astro";
+import BackIcon from "@icons/BackIcon.astro";
+
+interface Props {
+    images: ImageSchema[];
+    title: string;
+    locale?: string;
+}
+
+const { images, title, locale = "en" } = Astro.props;
+const { t } = useTranslations(locale);
+const galleryId = `${title
+    ?.toLowerCase()
+    .replace(/(-)+/g, "")
+    .replace(/(\s)+|(\.)+/g, "-")
+    .replace(/(\[)+|(\])+/g, "")}-gallery`;
+
+const thumbnails = images;
+---
+
+<DialogLayout
+    title={`${title} ${t("dialog.gallery.label")}`}
+    command="show_gallery"
+    locale={locale}
+>
+    <div
+        class="gallery-container"
+        data-id={galleryId}
+        data-images={JSON.stringify(images)}
+    >
+        <div class="gallery-title">
+            <h2 class="mono typewriter cursor" data-content={title}></h2>
+        </div>
+        <div class="gallery-nav" role="tablist" aria-label="Gallery Navigation">
+            <div class="nav-btn prev" aria-label="Previous image">
+                <BackIcon />
+            </div>
+            {
+                images.map((_, index) => (
+                    <button
+                        class="thumbnail"
+                        data-index={index}
+                        role="tab"
+                        aria-label={`View image ${index + 1} of ${images.length}`}
+                    >
+                        <img
+                            src={thumbnails[index].src}
+                            alt={thumbnails[index].alt}
+                            loading="lazy"
+                            decoding="async"
+                        />
+                    </button>
+                ))
+            }
+            <div class="nav-btn next" aria-label="Next image">
+                <BackIcon />
+            </div>
+        </div>
+
+        <div class="caption-container">
+            <p class="caption mono"></p>
+        </div>
+        <div class="image-container">
+            <img src="" alt="" />
+        </div>
+    </div>
+</DialogLayout>
+
+<style>
+    .gallery-container {
+        display: grid;
+        grid-template-areas:
+            "title"
+            "nav"
+            "caption"
+            "image";
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .gallery-title {
+        opacity: 0.7;
+    }
+
+    .gallery-title h2 {
+        grid-area: title;
+        margin-bottom: unset;
+        font-size: 1.15rem;
+        padding: 0rem 1rem;
+    }
+
+    .gallery-nav {
+        grid-area: nav;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        align-items: center;
+        overflow-x: auto;
+        padding: 1rem 1rem 0.5rem;
+        max-width: 100%;
+    }
+
+    .nav-btn {
+        display: none;
+        opacity: 0.7;
+    }
+
+    .thumbnail {
+        flex-shrink: 0;
+        width: 60px;
+        height: 60px;
+        border: 2px solid var(--border);
+        border-radius: 0.3125rem;
+        background: transparent;
+        cursor: pointer;
+        padding: 0;
+        transition: border-color 0.2s;
+    }
+
+    .thumbnail:hover,
+    .thumbnail.active {
+        border-color: var(--text);
+        box-shadow: 3px 3px 5px rgb(from var(--accent) r g b / 15%);
+    }
+
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 0.3s ease;
+        border-radius: 0.3125rem;
+        border: 1px solid var(--bg);
+        background: var(--bg);
+        opacity: 0.8;
+    }
+
+    .caption-container {
+        grid-area: caption;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        padding: 0rem 0.5rem;
+        min-height: 3.25rem;
+        font-size: clamp(0.9rem, 3vw, 1em);
+        opacity: 0.7;
+    }
+
+    .caption {
+        margin-bottom: 0rem;
+        align-content: center;
+    }
+
+    .image-container {
+        grid-area: image;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.8;
+    }
+
+    .image-container img {
+        max-width: 100%;
+        max-height: calc(100vh - 330px);
+        transition: opacity 0.3s ease;
+        border: 5px solid var(--border);
+        border-radius: 0.675rem;
+        box-shadow: 3px 3px 5px rgb(from var(--accent) r g b / 15%);
+        background: var(--border);
+    }
+
+    [data-theme="dark"] .image-container img {
+        box-shadow: none;
+    }
+
+    @media (min-width: 880px) {
+        .gallery-title h2 {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .gallery-container {
+            padding: 1rem 2rem;
+        }
+
+        .nav-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: var(--text);
+            opacity: 0.3;
+            transition: all 0.3s;
+            width: clamp(2rem, -3vw, 2.5rem);
+            height: clamp(2rem, -3vw, 2.5rem);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s;
+            opacity: 0.4;
+        }
+
+        .nav-btn.next {
+            transform: scaleX(-1);
+        }
+
+        .nav-btn.next:hover {
+            transform: translateY(-2px) scaleX(-1);
+            transition: all 0.3s;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+        }
+
+        .image-container img {
+            max-width: 95%;
+            max-height: 95%;
+            min-width: 95%;
+            min-height: 95%;
+        }
+    }
+</style>
+
+<script>
+    import type { ImageSchema } from "@/content.config";
+    import { typewriter } from "@utils/utils";
+
+    document.addEventListener("astro:page-load", () => {
+        document.querySelectorAll(".gallery-container").forEach((gallery) => {
+            if (!gallery) return;
+
+            const galleryElement: HTMLElement = gallery as HTMLElement;
+
+            let currentIndex = 0;
+            let isMobile = window.innerWidth <= 767;
+            const images: ImageSchema[] = JSON.parse(
+                galleryElement.dataset.images!,
+            );
+
+            const thumbnails = galleryElement.querySelectorAll(".thumbnail");
+            const img: HTMLImageElement = galleryElement.querySelector(
+                ".image-container img",
+            ) as HTMLImageElement;
+            const imgCaption: HTMLParagraphElement =
+                galleryElement.querySelector(
+                    ".caption-container .caption",
+                ) as HTMLParagraphElement;
+
+            function showImage(index: number) {
+                if (index < 0 || index >= images.length) {
+                    return;
+                }
+                currentIndex = index;
+
+                const src = images[index].src;
+                const mobileVariant = images[index].mobileVariant;
+
+                img.src = isMobile && mobileVariant ? mobileVariant : src;
+                img.alt = images[index].alt;
+                imgCaption.innerHTML = images[index].caption!;
+
+                thumbnails.forEach((thumb, i) => {
+                    thumb.classList.toggle("active", i === index);
+                });
+            }
+
+            function nextImage() {
+                const newIndex = (currentIndex + 1) % images.length;
+                showImage(newIndex);
+            }
+
+            function prevImage() {
+                const newIndex =
+                    (currentIndex - 1 + images.length) % images.length;
+                showImage(newIndex);
+            }
+
+            const dialog = document.querySelector(
+                `#${(gallery as HTMLElement).dataset.id}`,
+            );
+
+            dialog?.addEventListener("toggle", () => {
+                if (!(dialog as HTMLDialogElement).open) return;
+                currentIndex = 0;
+                const dialogTitle = dialog.querySelector(
+                    `.gallery-title h2`,
+                ) as HTMLElement;
+                typewriter(dialogTitle, 0);
+                showImage(currentIndex);
+            });
+
+            img.addEventListener("error", () => {
+                img.alt = "Image failed to load";
+                currentIndex = 0;
+            });
+
+            const prevBtn = gallery.querySelector(".prev");
+            const nextBtn = gallery.querySelector(".next");
+            prevBtn?.addEventListener("click", prevImage);
+            nextBtn?.addEventListener("click", nextImage);
+
+            thumbnails.forEach((thumb, index) => {
+                thumb.addEventListener("click", () => showImage(index));
+            });
+
+            document.addEventListener("keydown", (e) => {
+                if (!(dialog as HTMLDialogElement).open) return;
+                if (e.key === "ArrowRight") nextImage();
+                if (e.key === "ArrowLeft") prevImage();
+            });
+        });
+    });
+</script>

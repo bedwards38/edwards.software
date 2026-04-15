@@ -1,0 +1,148 @@
+---
+import type { ProjectEntry } from "@/content.config";
+import { getCollection } from "astro:content";
+import { locales } from "@/i18n/translations.ts";
+import { useTranslations } from "@utils/utils.ts";
+import Layout from "@layouts/Layout.astro";
+import Card from "@components/Card.astro";
+import CardFilter from "@components/CardFilter.astro";
+
+const { locale = "en" } = Astro.params;
+const page = locales.find((localeObj) => localeObj.code === locale);
+if (!page) return Astro.redirect("/404");
+
+const { t } = useTranslations(locale);
+
+const projects = (await getCollection("projects"))
+    .filter((project: ProjectEntry) => project.id.startsWith(`${locale}/`))
+    .sort((a: ProjectEntry, b: ProjectEntry) => {
+        if (!a.data.featured && b.data.featured) return 1;
+        else if (a.data.featured && !b.data.featured) return -1;
+        else {
+            let releaseDateA = a.data.releaseDate.getTime();
+            let releaseDateB = b.data.releaseDate.getTime();
+            return releaseDateA === releaseDateB
+                ? 0
+                : releaseDateA < releaseDateB
+                  ? 1
+                  : -1;
+        }
+    });
+---
+
+<Layout
+    title={`${t("site.projects.title")} | ${t("site.title")}`}
+    description={t("site.projects.description")}
+    prompt={t("page.projects.prompt")}
+    image="/images/opengraph/projects.png"
+    breadcrumbs={projects.map((project) => {
+        return { path: `/${project.id}`, name: project.data.title };
+    })}
+    locale={locale}
+    prevPath={`/${locale}`}
+>
+    <section class="projects">
+        <div class="container">
+            <div class="projects-header">
+                <div class="section-title">
+                    <h2
+                        class="typewriter cursor"
+                        data-content={t("page.projects.title")}
+                    >
+                    </h2>
+                </div>
+                <CardFilter
+                    class="projects-filter"
+                    locale={locale}
+                    filterCommand={t("page.projects.filter.command")}
+                    filters={Array.from(
+                        new Set(
+                            projects.flatMap(
+                                (project: ProjectEntry) => project.data.tech,
+                            ),
+                        ),
+                    )}
+                />
+            </div>
+            <div class="projects-grid">
+                {
+                    projects.map((project: ProjectEntry, index: number) => (
+                        <Card
+                            featured={project.data.featured}
+                            prototype={project.data.prototype}
+                            title={project.data.title}
+                            subtitle={project.data.description}
+                            tags={project.data.tech}
+                            repo={project.data.repo}
+                            demo={project.data.demo}
+                            images={project.data.images}
+                            entry={project}
+                            index={index}
+                            locale={locale}
+                            class={index === 0 ? "highlight" : ""}
+                        />
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    .projects {
+        padding: 0rem 0rem 1rem;
+        min-height: 55vh;
+        opacity: 0.7;
+    }
+
+    .projects .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .projects-header {
+        display: flex;
+        align-self: flex-start;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .section-title {
+        min-width: 100%;
+    }
+
+    .section-title h2 {
+        margin-bottom: unset;
+        max-width: fit-content;
+    }
+
+    .projects-filter {
+        margin-top: 1.25rem;
+        display: flex;
+        justify-content: end;
+        min-width: 100%;
+    }
+
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .projects-header {
+            margin-top: 2rem;
+        }
+
+        .projects-filter {
+            margin-top: 0rem;
+        }
+
+        .highlight {
+            grid-column: span 2;
+        }
+    }
+</style>

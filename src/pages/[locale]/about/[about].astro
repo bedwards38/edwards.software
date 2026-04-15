@@ -1,0 +1,41 @@
+---
+import type { AboutEntry } from "@/content.config";
+import { getEntry, render } from "astro:content";
+import { useTranslations } from "@utils/utils.ts";
+import Layout from "@layouts/Layout.astro";
+import ExplanationLayout from "@layouts/ExplanationLayout.astro";
+import Blockquote from "@components/content/Blockquote.astro";
+import H2 from "@components/content/H2.astro";
+import H3 from "@components/content/H3.astro";
+import UnorderedList from "@components/content/UnorderedList.astro";
+import ListItem from "@components/content/ListItem.astro";
+
+const { about, locale = "en" } = Astro.params;
+const entry: AboutEntry = await getEntry("about", `${locale}/about/${about}`)!;
+if (!entry) return Astro.redirect(`/${locale}`);
+
+const { t } = useTranslations(locale);
+const { Content } = await render(entry);
+---
+
+<Layout
+    title={`${t("site.experience.title")}/${about} | ${t("site.title")}`}
+    description={t("site.experience.description")}
+    prompt={t("page.about-education.prompt")}
+    image="/images/opengraph/about-explanation.png"
+    breadcrumbs={[{ path: `/${locale}/about`, name: t("site.about.title") }]}
+    locale={locale}
+    prevPath={`/${locale}/about`}
+>
+    <ExplanationLayout>
+        <Content
+            components={{
+                blockquote: Blockquote,
+                h2: H2,
+                h3: H3,
+                ul: UnorderedList,
+                li: ListItem,
+            }}
+        />
+    </ExplanationLayout>
+</Layout>

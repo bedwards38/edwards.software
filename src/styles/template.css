@@ -1,0 +1,183 @@
+/*
+    MIT License
+
+    Copyright (c) 2025 686f6c61
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #efebe7;
+    --text: #181a1b;
+    --accent: #272a2c;
+    --border: #d6d6d6;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #181a1b;
+        --text: #e8e6e3;
+        --accent: #e5e5e5;
+        --border: #272a2c;
+    }
+}
+
+[data-theme="dark"] {
+    --bg: #181a1b;
+    --text: #e8e6e3;
+    --accent: #eeeeee;
+    --border: #272a2c;
+}
+
+[data-theme="light"] {
+    --bg: #efebe7;
+    --text: #181a1b;
+    --accent: #272a2c;
+    --border: #d6d6d6;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--mono);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 16px;
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--mono);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: clamp(1.75rem, 5vw, 4rem);
+}
+
+h2 {
+    font-size: clamp(1.5rem, 1.5vw, 2rem);
+    margin-bottom: 1.25rem;
+}
+
+h3 {
+    font-size: clamp(1.15rem, 1.5vw, 1.25rem);
+    margin-bottom: 0.75rem;
+}
+
+h4 {
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    margin-bottom: 0.5rem;
+}
+
+h5 {
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
+    margin-bottom: 0.25rem;
+}
+
+p {
+    margin-bottom: 1rem;
+    max-width: 115ch;
+}
+
+a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--text);
+    transition: opacity 0.2s;
+}
+
+a:hover {
+    opacity: 0.6;
+}
+
+section {
+    padding: 3rem 0;
+    min-width: 75vw;
+}
+
+.container {
+    padding: 0 1.25rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (min-width: 880px) {
+    .container {
+        padding: 0 2rem;
+    }
+
+    section {
+        padding: 4rem 0;
+    }
+}
+
+.mono {
+    font-family: var(--mono);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after,
+    *::hover {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+}

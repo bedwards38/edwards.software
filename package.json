@@ -1,0 +1,28 @@
+{
+  "name": "edwards.software",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "edwards.software - A full stack software engineer's development portfolio. Specialized in microservice architecture and legacy system modernization.",
+  "author": "Braedyn Edwards",
+  "license": "MIT",
+  "scripts": {
+    "dev": "wrangler types && astro dev",
+    "build": "wrangler types && astro build",
+    "preview": "wrangler types && astro build && astro preview",
+    "astro": "wrangler types && astro",
+    "generate-types": "wrangler types"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.1.8",
+    "@astrojs/mdx": "^5.0.3",
+    "astro": "^6.1.5",
+    "wrangler": "^4.82.1"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6",
+    "terser": "^5.46.1"
+  },
+  "overrides": {
+    "vite": "^7"
+  }
+}

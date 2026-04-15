@@ -1,0 +1,272 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type {
+    AboutEntry,
+    ProjectEntry,
+    ExperienceEntry,
+    ImageSchema,
+} from "@/content.config";
+import { useTranslations } from "@utils/utils.ts";
+import RightArrowIcon from "@components/icons/RightArrowIcon.astro";
+
+interface Props extends HTMLAttributes<"article"> {
+    featured: boolean;
+    prototype?: boolean;
+    title?: string;
+    subtitle?: string;
+    tags?: string[];
+    link?: string;
+    repo?: string;
+    demo?: string;
+    images?: ImageSchema[];
+    entry?: AboutEntry | ProjectEntry | ExperienceEntry;
+    index?: number;
+    locale?: string;
+}
+
+const {
+    featured,
+    prototype,
+    title,
+    subtitle,
+    tags,
+    link,
+    repo,
+    demo,
+    images,
+    entry,
+    index = 0,
+    locale = "en",
+    class: className,
+    ...props
+} = Astro.props;
+
+const { t } = useTranslations(locale);
+---
+
+<article
+    class={`card ${featured ? "featured" : ""} fade-in ${className ?? ""}`}
+    style={`animation-delay: ${index * 0.1}s`}
+    data-tags={tags?.join(",")}
+    {...props}
+>
+    <div class="card-header">
+        {
+            prototype && (
+                <span class="prototype-badge mono">{t("card.prototype")}</span>
+            )
+        }
+        {
+            featured && (
+                <span class="featured-badge mono">{t("card.featured")}</span>
+            )
+        }
+    </div>
+
+    <div class="card-content">
+        {title && <h3 class="card-title" set:html={title} />}
+        {subtitle && <p set:html={subtitle} />}
+    </div>
+
+    <div class="card-footer">
+        {
+            tags && (
+                <div class="tag-container">
+                    {tags.map((tag: string) => (
+                        <span class="tag">{tag}</span>
+                    ))}
+                </div>
+            )
+        }
+        {
+            entry?.body && (
+                <div class="explanation-link">
+                    <a class="btn-explanation" href={`/${entry.id}`}>
+                        <span class="mono explanation-title">
+                            {t("card.button.description")}
+                        </span>
+                        <RightArrowIcon class="right-arrow" />
+                    </a>
+                </div>
+            )
+        }
+    </div>
+</article>
+
+<style>
+    .card.hidden {
+        display: none;
+    }
+
+    .card {
+        border: 1px solid var(--border);
+        border-radius: 0.625rem;
+        transition:
+            transform 0.3s,
+            border-color 0.3s,
+            background 0.3s;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card.featured {
+        border: 2px solid var(--text);
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgb(from var(--text) r g b / 3%) 100%
+        );
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        border-color: var(--text);
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgb(from var(--text) r g b / 5%) 100%
+        );
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: end;
+        padding: 0.75rem 1rem 0rem;
+        gap: 0.5rem;
+        min-height: 2.42rem;
+    }
+
+    .featured-badge {
+        font-size: clamp(0.55rem, 1.5vw, 0.65rem);
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--text);
+        border-radius: 0.3125rem;
+        background: var(--bg);
+        letter-spacing: 0.1em;
+        align-content: center;
+    }
+
+    .prototype-badge {
+        font-size: clamp(0.55rem, 1.5vw, 0.65rem);
+        padding: 0.25rem 0.5rem;
+        border: 1px dashed var(--text);
+        border-radius: 0.3125rem;
+        background: var(--bg);
+        letter-spacing: 0.1em;
+        align-content: center;
+    }
+
+    .card-content {
+        padding: 0rem 2rem;
+    }
+
+    .card-title {
+        margin-top: 0.75rem;
+        font-size: 1.45rem;
+    }
+
+    .card.featured h3 {
+        font-size: 1.5rem;
+    }
+
+    .card p {
+        opacity: 0.8;
+        margin: 1rem 0rem;
+        font-size: 0.95rem;
+        font-family: var(--mono);
+        line-height: 1.7;
+        flex-grow: 1;
+    }
+
+    .card-footer {
+        display: flex;
+        margin-top: auto;
+        flex-direction: column;
+        padding: 0rem 1.5rem 0.5rem;
+    }
+
+    .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-content: flex-start;
+        padding: 0rem 0.5rem;
+    }
+
+    .tag {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 0.3125rem;
+        background: var(--bg);
+    }
+
+    .explanation-link {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: end;
+        margin-top: 0.25rem;
+    }
+
+    .card-footer a {
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .explanation-title {
+        display: none;
+    }
+
+    .btn-explanation {
+        color: var(--text);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        opacity: 0.5;
+        gap: 0.5rem;
+        font-family: var(--mono);
+    }
+
+    .btn-explanation:hover {
+        opacity: 0.9;
+        transition: opacity 0.5s;
+    }
+
+    .right-arrow {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    @media (min-width: 880px) {
+        .card.featured h3 {
+            font-size: 1.75rem;
+        }
+
+        .card-footer {
+            padding: 0rem 1.5rem 1rem;
+        }
+
+        .explanation-link {
+            margin-top: 0.5rem;
+        }
+
+        .explanation-title {
+            display: block;
+        }
+
+        .card:not(:hover) .btn-explanation {
+            opacity: 0;
+        }
+
+        .card:hover .btn-explanation:not(:hover) {
+            opacity: 0.5;
+            transition: opacity 0.5s;
+        }
+    }
+</style>

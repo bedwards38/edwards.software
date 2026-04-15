@@ -1,0 +1,145 @@
+---
+import type { ExperienceEntry } from "@/content.config";
+import { getCollection } from "astro:content";
+import { locales } from "@/i18n/translations.ts";
+import { useTranslations } from "@utils/utils.ts";
+import Layout from "@layouts/Layout.astro";
+import Card from "@components/Card.astro";
+import CardFilter from "@components/CardFilter.astro";
+
+const { locale = "en" } = Astro.params;
+const page = locales.find((localeObj) => localeObj.code === locale);
+if (!page) return Astro.redirect("/404");
+
+const { t } = useTranslations(locale!);
+
+const experience = (await getCollection("experience"))
+    .filter((experience: ExperienceEntry) =>
+        experience.id.startsWith(`${locale}/`),
+    )
+    .sort((a: ExperienceEntry, b: ExperienceEntry) => {
+        if (!a.data.featured && b.data.featured) return 1;
+        else if (a.data.featured && !b.data.featured) return -1;
+        else {
+            let endDateA = a.data.endDate?.getTime();
+            let endDateB = b.data.endDate?.getTime();
+
+            return endDateA && endDateB
+                ? endDateB - endDateA
+                : endDateB && !endDateA
+                  ? 1
+                  : -1;
+        }
+    });
+---
+
+<Layout
+    title={`${t("site.experience.title")} | ${t("site.title")}`}
+    description={t("site.experience.description")}
+    prompt={t("page.experience.prompt")}
+    image="/images/opengraph/experience.png"
+    breadcrumbs={experience.map((experience) => {
+        return { path: `/${experience.id}`, name: experience.data.title };
+    })}
+    locale={locale}
+    prevPath={`/${locale}`}
+>
+    <section class="experience">
+        <div class="container">
+            <div class="experience-header">
+                <div class="section-title">
+                    <h2
+                        class="typewriter cursor"
+                        data-content={t("page.experience.title")}
+                    >
+                    </h2>
+                </div>
+                <CardFilter
+                    class="experience-filter"
+                    locale={locale}
+                    filterCommand={t("page.experience.filter.command")}
+                    filters={Array.from(
+                        new Set(
+                            experience.flatMap(
+                                (position: ExperienceEntry) =>
+                                    position.data.tech,
+                            ),
+                        ),
+                    )}
+                />
+            </div>
+            <div class="experience-grid">
+                {
+                    experience.map(
+                        (position: ExperienceEntry, index: number) => (
+                            <Card
+                                featured={position.data.featured}
+                                title={position.data.title}
+                                subtitle={position.data.description}
+                                tags={position.data.tech}
+                                entry={position}
+                                index={index}
+                                locale={locale}
+                            />
+                        ),
+                    )
+                }
+            </div>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    .experience {
+        padding: 0rem 0rem 1rem;
+        min-height: 55vh;
+        opacity: 0.7;
+    }
+
+    .experience .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .experience-header {
+        display: flex;
+        align-self: flex-start;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .section-title {
+        min-width: 100%;
+    }
+
+    .section-title h2 {
+        margin-bottom: unset;
+        max-width: fit-content;
+    }
+
+    .experience-filter {
+        margin-top: 1.25rem;
+        display: flex;
+        justify-content: end;
+        min-width: 100%;
+    }
+
+    .experience-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .experience-header {
+            margin-top: 2rem;
+        }
+
+        .experience-filter {
+            margin-top: 0rem;
+        }
+    }
+</style>

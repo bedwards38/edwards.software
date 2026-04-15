@@ -1,0 +1,28 @@
+---
+const { ...props } = Astro.props;
+---
+
+<div class="explanation-container" {...props}>
+    <slot />
+</div>
+
+<style>
+    .explanation-container {
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        text-align: left;
+        line-height: 1.7;
+        opacity: 0.7;
+        padding: 0rem clamp(2rem, 3vw, 2.5rem);
+    }
+
+    @media (min-width: 880px) {
+        .explanation-container {
+            font-size: 0.95rem;
+            text-align: justify;
+            padding: 2rem clamp(2rem, 3vw, 2.5rem) 0rem;
+            margin: auto 6rem;
+            max-width: 60vw;
+        }
+    }
+</style>

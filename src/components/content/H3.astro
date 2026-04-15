@@ -1,0 +1,13 @@
+---
+const { class: className, ...rest } = Astro.props;
+const html = await Astro.slots.render("default");
+const customClass = `${className ?? ""} typewriter`;
+---
+
+<h3 {...rest} class={customClass} data-content={html}></h3>
+
+<style>
+    h3 {
+        min-height: 1.5rem;
+    }
+</style>

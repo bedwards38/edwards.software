@@ -1,0 +1,141 @@
+---
+import { useTranslations } from "@utils/utils.ts";
+import CloseIcon from "@components/icons/CloseIcon.astro";
+import SearchIcon from "@components/icons/SearchIcon.astro";
+
+const { title, command, locale = "en", ...props } = Astro.props;
+const { t } = useTranslations(locale);
+
+const normalizedTitle = title
+    ?.toLowerCase()
+    .replace(/(-)+/g, "")
+    .replace(/(\s)+|(\.)+/g, "-")
+    .replace(/(\[)+|(\])+/g, "");
+---
+
+<dialog
+    id={normalizedTitle}
+    class="dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-label={`${title} ${t("dialog.label")}`}
+    {...props}
+>
+    <div class="dialog-container">
+        <div class="dialog-header">
+            <div class="dialog-title">
+                <span class="title mono">
+                    <SearchIcon class="search-icon" />{command}
+                </span>
+            </div>
+            <div class="dialog-controls">
+                <button
+                    class="dialog-close"
+                    command="close"
+                    commandfor={normalizedTitle}
+                    aria-label={t("dialog.button.close")}
+                >
+                    <CloseIcon />
+                </button>
+            </div>
+        </div>
+        <div class="dialog-body">
+            <slot />
+        </div>
+    </div>
+</dialog>
+
+<style>
+    ::backdrop {
+        background-color: rgb(from var(--border) r g b / 75%);
+        animation: fadeIn 0.35s ease-in-out;
+    }
+
+    .dialog {
+        margin: auto;
+        border: 2px solid var(--border);
+        border-radius: 0.625rem;
+        max-width: 90%;
+        animation: fadeIn 0.35s ease-in-out;
+        background: transparent;
+    }
+
+    .dialog-container {
+        display: flex;
+        flex-direction: column;
+        color: var(--text);
+        background: var(--bg);
+    }
+
+    .dialog-header {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid var(--border);
+        padding: 0.625rem 0.625rem;
+        gap: 1rem;
+        margin-bottom: 0.3125rem;
+        opacity: 0.7;
+    }
+
+    .dialog-title {
+        flex: 1;
+        padding: 0rem 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 0.625rem;
+    }
+
+    .title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        font-size: clamp(0.9rem, 3vw, 1em);
+        opacity: 0.5;
+        line-height: 1.7;
+    }
+
+    .search-icon {
+        color: var(--text);
+        opacity: 0.3;
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .dialog-close {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        color: var(--text);
+        opacity: 0.3;
+        transition: all 0.3s;
+        background: transparent;
+        border: none;
+        width: clamp(1.75rem, -3vw, 2.5rem);
+        height: clamp(1.75rem, -3vw, 2.5rem);
+    }
+
+    .dialog-close:hover {
+        transform: translateY(-2px);
+        transition: all 0.3s;
+        opacity: 0.6;
+    }
+
+    .dialog-body {
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+
+    @media (min-width: 768px) {
+        .dialog {
+            max-width: 70%;
+        }
+
+        .search-icon {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+</style>

@@ -1,0 +1,31 @@
+---
+import { useTranslations } from "@utils/utils.ts";
+import BackIcon from "@icons/BackIcon.astro";
+
+const { prevPath, locale = "en", ...props } = Astro.props;
+
+const { t } = useTranslations(locale);
+---
+
+<a
+    id="back-btn"
+    href={prevPath}
+    aria-label={t("button.link.back")}
+    title={t("button.link.back")}
+    {...props}
+>
+    <BackIcon />
+</a>
+
+<style>
+    #back-btn {
+        cursor: pointer;
+        transition: all 0.3s;
+        color: var(--text);
+        border: none;
+    }
+
+    #back-btn:hover {
+        transform: translateY(-2px);
+    }
+</style>

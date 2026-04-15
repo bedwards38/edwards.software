@@ -1,0 +1,99 @@
+---
+import type { IndexEntry } from "@/content.config";
+import { getEntry } from "astro:content";
+import { getLocaleFromUrl, useTranslations } from "@utils/utils.ts";
+import Layout from "@layouts/Layout.astro";
+
+const locale = getLocaleFromUrl(Astro.url);
+const { t } = useTranslations(locale);
+const entry: IndexEntry = await getEntry("index", `${locale}/index/404`)!;
+---
+
+<Layout
+    title={`~${Astro.url.pathname} | ${t("site.title")}`}
+    description={t("site.404.description")}
+    prompt={t("404.prompt").replace(/\$\{path\}/g, Astro.url.pathname)}
+    locale={locale}
+    prevPath={`/${locale}`}
+>
+    <div class="error-container">
+        <h3
+            class="typewriter cursor"
+            data-content={entry.data.title.replace(
+                /\$\{path\}/g,
+                Astro.url.pathname,
+            )}
+        >
+        </h3>
+        <div class="btn-container">
+            <button
+                class="home-btn"
+                onclick={`window.location.href = '/${locale}'`}
+                >{entry.data.subtitle}</button
+            >
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .terminal-content {
+        min-height: unset;
+    }
+
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        /*min-height: 30vh;*/
+        min-width: 95%;
+        opacity: 0.7;
+        padding: 0rem clamp(2rem, 3vw, 2.5rem);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        width: 95%;
+    }
+
+    .error-container h3 {
+        max-width: 95%;
+    }
+
+    .home-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        color: var(--text);
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 0.3125rem;
+        padding: 0.5rem 0.75rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+
+    .home-btn:hover {
+        border-color: var(--text);
+        transform: translateY(-2px);
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgb(from var(--text) r g b / 5%) 100%
+        );
+    }
+
+    @media (min-width: 880px) {
+        .home-btn {
+            width: 35%;
+        }
+    }
+</style>

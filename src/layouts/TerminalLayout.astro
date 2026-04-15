@@ -1,0 +1,270 @@
+---
+import BackButton from "@components/BackButton.astro";
+import LanguageSwitcher from "@components/LanguageSwitcher.astro";
+import ThemeToggle from "@components/ThemeToggle.astro";
+import LogoIcon from "@components/icons/LogoIcon.astro";
+
+interface Props {
+    title?: string;
+    description?: string;
+    prompt?: string;
+    locale?: string;
+    image?: string;
+    prevPath?: string;
+}
+
+const { title, prompt, prevPath, locale = "en", ...props } = Astro.props;
+const isHome =
+    Astro.url.pathname === `/${locale}` || Astro.url.pathname === `/${locale}/`;
+---
+
+<div class="container">
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-controls">
+                <div class="window-btns">
+                    <span class="circle"></span>
+                    <span class="circle"></span>
+                    <span class="circle"></span>
+                </div>
+                {
+                    !isHome && (
+                        <BackButton
+                            class="back-btn-left"
+                            locale={locale}
+                            prevPath={prevPath}
+                        />
+                    )
+                }
+            </div>
+            <div class="terminal-title">
+                <div class="logo"><LogoIcon /></div>
+                <span class="title mono">{title}</span>
+            </div>
+            <div class="terminal-settings">
+                {
+                    !isHome && (
+                        <BackButton
+                            class="back-btn-right"
+                            locale={locale}
+                            prevPath={prevPath}
+                        />
+                    )
+                }
+                <ThemeToggle class="theme-toggle" locale={locale} />
+                <LanguageSwitcher class="translate-btn" locale={locale} />
+            </div>
+        </div>
+        {
+            prompt && (
+                <div class="terminal-prompt">
+                    <p class="prompt mono" set:html={prompt} />
+                </div>
+            )
+        }
+        <div class={`terminal-content fade-in`} {...props}>
+            <main id="main-content">
+                <slot />
+            </main>
+        </div>
+    </div>
+</div>
+<script>
+    import { navigate } from "astro:transitions/client";
+    import { getLocaleFromUrl } from "@utils/utils";
+
+    document.addEventListener("astro:page-load", () => {
+        const locale = getLocaleFromUrl(new URL(window.location.href));
+        document
+            .querySelector(".terminal-title")
+            ?.addEventListener("click", () => navigate(`/${locale}`));
+    });
+</script>
+<style>
+    .container {
+        padding: 2rem 1rem 2rem 1rem;
+        min-height: 70vh;
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .terminal-container {
+        border: 2px solid var(--border);
+        border-radius: 0.625rem;
+        max-width: 100%;
+    }
+
+    .terminal-header {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-areas: "controls title settings";
+        width: 100%;
+        border-bottom: 2px solid var(--border);
+    }
+
+    .terminal-controls {
+        grid-area: controls;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        padding: 0.65rem;
+        gap: 1rem;
+    }
+
+    .window-btns {
+        gap: 0.5rem;
+        cursor: default;
+    }
+
+    .circle {
+        width: clamp(0.5rem, 1.5vw, 0.75rem);
+        height: clamp(0.5rem, 1.5vw, 0.75rem);
+        border-radius: 50%;
+        display: inline-block;
+        background-color: var(--text);
+        opacity: 0.1;
+    }
+
+    .terminal-title {
+        grid-area: title;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .logo {
+        width: 2rem;
+        height: 2rem;
+        color: var(--text);
+        opacity: 0.3;
+    }
+
+    .title {
+        display: none;
+        color: var(--text);
+        opacity: 0.3;
+    }
+
+    .terminal-settings {
+        grid-area: settings;
+        display: grid;
+        grid-template-areas: "nav theme translate";
+        justify-content: end;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.35rem 0.65rem 0rem 0.65rem;
+    }
+
+    .back-btn-left {
+        width: 1.5rem;
+        opacity: 0.2;
+    }
+
+    .back-btn-right,
+    .translate-btn,
+    .theme-toggle {
+        width: 1.75rem;
+        opacity: 0.2;
+    }
+
+    .title:hover,
+    .back-btn-left:hover,
+    .back-btn-right:hover,
+    .translate-btn:hover,
+    .translate-btn.active,
+    .theme-toggle:hover {
+        transition: opacity 0.3s;
+        opacity: 0.4;
+    }
+
+    .back-btn-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .back-btn-right {
+        grid-area: nav;
+        display: none;
+    }
+
+    .theme-toggle {
+        grid-area: theme;
+    }
+
+    .translate-btn {
+        grid-area: translate;
+    }
+
+    .terminal-prompt {
+        margin: 1.5rem 1rem 2rem 1rem;
+    }
+
+    .prompt {
+        font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+        opacity: 0.7;
+    }
+
+    .terminal-content {
+        margin: 0rem 0.5rem 1rem 0.5rem;
+        overflow-y: auto;
+        max-height: 55vh;
+        min-height: 55vh;
+    }
+
+    @media (min-width: 880px) {
+        .container {
+            padding: 3rem 2rem 0rem;
+        }
+
+        .terminal-header {
+            grid-template-areas: "settings title controls";
+        }
+
+        .terminal-controls {
+            justify-content: end;
+        }
+
+        .terminal-settings {
+            grid-template-areas: "translate theme nav";
+            justify-content: start;
+        }
+
+        .back-btn-left {
+            display: none !important;
+        }
+
+        .back-btn-right {
+            display: flex;
+        }
+
+        .logo {
+            display: none;
+        }
+
+        .theme-toggle {
+            transform: scaleX(-1);
+        }
+
+        .theme-toggle:hover {
+            transform: none;
+        }
+
+        .title {
+            display: inherit;
+            font-size: clamp(0.65em, 1vw, 0.925rem);
+        }
+
+        .terminal-prompt {
+            margin: 2rem 0rem 0rem 2.25rem;
+        }
+
+        .terminal-content {
+            min-width: 80%;
+            max-height: 72vh;
+            min-height: unset;
+        }
+    }
+</style>

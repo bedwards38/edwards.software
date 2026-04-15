@@ -1,0 +1,50 @@
+---
+import type { ProjectEntry } from "@/content.config";
+import { getEntry, render } from "astro:content";
+import { useTranslations } from "@utils/utils.ts";
+import Layout from "@layouts/Layout.astro";
+import ExplanationLayout from "@layouts/ExplanationLayout.astro";
+import Blockquote from "@components/content/Blockquote.astro";
+import H2 from "@components/content/H2.astro";
+import H3 from "@components/content/H3.astro";
+import UnorderedList from "@components/content/UnorderedList.astro";
+import ListItem from "@components/content/ListItem.astro";
+
+const { project, locale = "en" } = Astro.params;
+const entry: ProjectEntry = await getEntry(
+    "projects",
+    `${locale}/projects/${project}`,
+)!;
+if (!entry) return Astro.redirect(`/${locale}`);
+
+const { t } = useTranslations(locale);
+
+const { Content } = await render(entry);
+---
+
+<Layout
+    title={`${t("site.projects.title")}/${project} | ${t("site.title")}`}
+    description={t("site.projects.description")}
+    prompt={t("page.project-explanation.prompt").replace(
+        /\$\{project\}/g,
+        project!,
+    )}
+    image="/images/opengraph/projects-explanation.png"
+    breadcrumbs={[
+        { path: `/${locale}/projects`, name: t("site.projects.title") },
+    ]}
+    locale={locale}
+    prevPath={`/${locale}/projects`}
+>
+    <ExplanationLayout>
+        <Content
+            components={{
+                blockquote: Blockquote,
+                h2: H2,
+                h3: H3,
+                ul: UnorderedList,
+                li: ListItem,
+            }}
+        />
+    </ExplanationLayout>
+</Layout>
