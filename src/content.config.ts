@@ -56,7 +56,7 @@ const experience = defineCollection({
     slug: z.string(),
     title: z.string(),
     description: z.string(),
-    tech: z.array(z.string()),
+    tech: z.array(z.string()).optional(),
     endDate: z.coerce.date().optional(),
   }),
 });

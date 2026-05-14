@@ -31,7 +31,7 @@ interface Props {
     locale?: string;
 }
 
-const { locale = "es" } = Astro.props;
+const { locale = "en" } = Astro.props;
 
 const { t } = useTranslations(locale);
 
@@ -109,15 +109,6 @@ const currentYear = new Date().getFullYear();
             gap: 0.75rem;
         }
 
-        .footer-links a {
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .footer-links a:hover {
-            opacity: 1;
-        }
-
         .footer-email {
             width: 100%;
             min-height: 2.5rem;
@@ -127,8 +118,12 @@ const currentYear = new Date().getFullYear();
         }
 
         .reveal-email {
-            background: transparent;
-            border: 2px solid var(--border);
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgb(from var(--text) r g b / 2%) 100%
+            );
+            border: 1.25px solid var(--border);
             border-radius: 0.3125rem;
             color: var(--text);
             padding: 0.5rem 1.25rem;
@@ -139,7 +134,12 @@ const currentYear = new Date().getFullYear();
         }
 
         .reveal-email:hover {
-            border-color: var(--text);
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgb(from var(--text) r g b / 4%) 100%
+            );
+            border-color: var(--earth);
             transform: translateY(-2px);
         }
 
@@ -154,9 +154,14 @@ const currentYear = new Date().getFullYear();
             color: var(--text);
         }
 
-        .github-icon,
-        .linkedin-icon {
+        .footer-links {
             color: var(--text);
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--earth-hover);
+            border-color: var(--earth-hover);
         }
 
         @media (min-width: 880px) {
@@ -199,13 +204,27 @@ const currentYear = new Date().getFullYear();
         }
     </style>
 
+    <script is:inline>
+        function applyEmailVisibility() {
+            if (localStorage.getItem("emailRevealed") !== "true") return;
+            var btn = document.getElementById("reveal-email");
+            var display = document.getElementById("email-display");
+            if (btn) btn.style.display = "none";
+            if (display) { display.style.display = "flex"; display.style.animation = "none"; }
+        }
+        document.addEventListener("astro:after-swap", applyEmailVisibility);
+        applyEmailVisibility();
+    </script>
+
     <script>
         document.addEventListener("astro:page-load", () => {
-            const revealButton = document.getElementById("reveal-email")!;
-            const emailDisplay = document.getElementById("email-display")!;
+            const revealButton = document.getElementById("reveal-email");
+            if (!revealButton || localStorage.getItem("emailRevealed") === "true") return;
 
             revealButton.addEventListener("click", () => {
+                localStorage.setItem("emailRevealed", "true");
                 revealButton.style.display = "none";
+                const emailDisplay = document.getElementById("email-display")!;
                 emailDisplay.style.display = "flex";
             });
         });

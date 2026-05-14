@@ -112,22 +112,26 @@ const { t } = useTranslations(locale);
     }
 
     .card.featured {
-        border: 2px solid var(--text);
+        border: 2px solid var(--earth);
         background: linear-gradient(
             135deg,
             transparent 0%,
-            rgb(from var(--text) r g b / 3%) 100%
+            rgb(from var(--earth) r g b / 3%) 100%
         );
     }
 
     .card:hover {
         transform: translateY(-4px);
-        border-color: var(--text);
+        border-color: var(--earth);
         background: linear-gradient(
             135deg,
             transparent 0%,
-            rgb(from var(--text) r g b / 5%) 100%
+            rgb(from var(--text) r g b / 4%) 100%
         );
+    }
+
+    .card.featured:hover {
+        border-color: var(--earth-hover);
     }
 
     .card-header {
@@ -141,21 +145,25 @@ const { t } = useTranslations(locale);
     .featured-badge {
         font-size: clamp(0.55rem, 1.5vw, 0.65rem);
         padding: 0.25rem 0.5rem;
-        border: 1px solid var(--text);
+        border: 1px solid rgb(from var(--earth) r g b / 40%);
         border-radius: 0.3125rem;
         background: var(--bg);
+        color: var(--text);
         letter-spacing: 0.1em;
         align-content: center;
+        opacity: 0.7;
     }
 
     .prototype-badge {
         font-size: clamp(0.55rem, 1.5vw, 0.65rem);
         padding: 0.25rem 0.5rem;
-        border: 1px dashed var(--text);
+        border: 1px dashed rgb(from var(--earth) r g b / 40%);
         border-radius: 0.3125rem;
         background: var(--bg);
+        color: var(--text);
         letter-spacing: 0.1em;
         align-content: center;
+        opacity: 0.7;
     }
 
     .card-content {
@@ -233,7 +241,14 @@ const { t } = useTranslations(locale);
         font-family: var(--mono);
     }
 
+    .btn-explanation::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+    }
+
     .btn-explanation:hover {
+        color: var(--text);
         opacity: 0.9;
         transition: opacity 0.5s;
     }
@@ -267,6 +282,10 @@ const { t } = useTranslations(locale);
         .card:hover .btn-explanation:not(:hover) {
             opacity: 0.5;
             transition: opacity 0.5s;
+        }
+
+        .btn-explanation::after {
+            display: none;
         }
     }
 </style>

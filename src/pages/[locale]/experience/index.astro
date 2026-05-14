@@ -24,11 +24,9 @@ const experience = (await getCollection("experience"))
             let endDateA = a.data.endDate?.getTime();
             let endDateB = b.data.endDate?.getTime();
 
-            return endDateA && endDateB
-                ? endDateB - endDateA
-                : endDateB && !endDateA
-                  ? 1
-                  : -1;
+            if (endDateA && endDateB) return endDateB - endDateA;
+            if (!endDateA && !endDateB) return 0;
+            return endDateA ? 1 : -1;
         }
     });
 ---
@@ -38,9 +36,6 @@ const experience = (await getCollection("experience"))
     description={t("site.experience.description")}
     prompt={t("page.experience.prompt")}
     image="/images/opengraph/experience.png"
-    breadcrumbs={experience.map((experience) => {
-        return { path: `/${experience.id}`, name: experience.data.title };
-    })}
     locale={locale}
     prevPath={`/${locale}`}
 >
@@ -62,7 +57,7 @@ const experience = (await getCollection("experience"))
                         new Set(
                             experience.flatMap(
                                 (position: ExperienceEntry) =>
-                                    position.data.tech,
+                                    position.data.tech ?? null,
                             ),
                         ),
                     )}
@@ -80,6 +75,9 @@ const experience = (await getCollection("experience"))
                                 entry={position}
                                 index={index}
                                 locale={locale}
+                                class={
+                                    position.data.featured ? "highlight" : ""
+                                }
                             />
                         ),
                     )
@@ -140,6 +138,10 @@ const experience = (await getCollection("experience"))
 
         .experience-filter {
             margin-top: 0rem;
+        }
+
+        .highlight {
+            grid-column: 1 / -1;
         }
     }
 </style>

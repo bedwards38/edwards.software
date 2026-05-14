@@ -41,7 +41,6 @@ const galleryId = `${title
     .replace(/(\s)+|(\.)+/g, "-")
     .replace(/(\[)+|(\])+/g, "")}-gallery`;
 
-const thumbnails = images;
 ---
 
 <DialogLayout
@@ -62,7 +61,7 @@ const thumbnails = images;
                 <BackIcon />
             </div>
             {
-                images.map((_, index) => (
+                images.map((image, index) => (
                     <button
                         class="thumbnail"
                         data-index={index}
@@ -70,8 +69,8 @@ const thumbnails = images;
                         aria-label={`View image ${index + 1} of ${images.length}`}
                     >
                         <img
-                            src={thumbnails[index].src}
-                            alt={thumbnails[index].alt}
+                            src={image.src}
+                            alt={image.alt}
                             loading="lazy"
                             decoding="async"
                         />
@@ -87,7 +86,9 @@ const thumbnails = images;
             <p class="caption mono"></p>
         </div>
         <div class="image-container">
-            <img src="" alt="" />
+            <div class="image-frame">
+                <img src="" alt="" />
+            </div>
         </div>
     </div>
 </DialogLayout>
@@ -108,7 +109,7 @@ const thumbnails = images;
     }
 
     .gallery-title {
-        opacity: 0.7;
+        opacity: 0.8;
     }
 
     .gallery-title h2 {
@@ -132,7 +133,10 @@ const thumbnails = images;
 
     .nav-btn {
         display: none;
-        opacity: 0.7;
+    }
+
+    .nav-btn.next {
+        transform: scaleX(-1);
     }
 
     .thumbnail {
@@ -147,10 +151,18 @@ const thumbnails = images;
         transition: border-color 0.2s;
     }
 
-    .thumbnail:hover,
-    .thumbnail.active {
-        border-color: var(--text);
+    .thumbnail:hover {
+        border-color: var(--earth);
         box-shadow: 3px 3px 5px rgb(from var(--accent) r g b / 15%);
+    }
+
+    .thumbnail.active {
+        border-color: var(--earth-hover);
+        box-shadow: 3px 3px 5px rgb(from var(--accent) r g b / 15%);
+    }
+
+    .thumbnail.active img {
+        opacity: 1;
     }
 
     .thumbnail img {
@@ -173,7 +185,7 @@ const thumbnails = images;
         padding: 0rem 0.5rem;
         min-height: 3.25rem;
         font-size: clamp(0.9rem, 3vw, 1em);
-        opacity: 0.7;
+        opacity: 0.8;
     }
 
     .caption {
@@ -183,24 +195,28 @@ const thumbnails = images;
 
     .image-container {
         grid-area: image;
-        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0.8;
     }
 
-    .image-container img {
-        max-width: 100%;
-        max-height: calc(100vh - 330px);
-        transition: opacity 0.3s ease;
+    .image-frame {
         border: 5px solid var(--border);
         border-radius: 0.675rem;
         box-shadow: 3px 3px 5px rgb(from var(--accent) r g b / 15%);
         background: var(--border);
+        overflow: hidden;
+        display: flex;
     }
 
-    [data-theme="dark"] .image-container img {
+    .image-container img {
+        max-width: 100%;
+        max-height: calc(100vh - 330px);
+        transition: opacity 0.15s ease;
+    }
+
+    [data-theme="dark"] .image-frame {
         box-shadow: none;
     }
 
@@ -220,16 +236,16 @@ const thumbnails = images;
             align-items: center;
             cursor: pointer;
             color: var(--text);
-            opacity: 0.3;
-            transition: all 0.3s;
-            width: clamp(2rem, -3vw, 2.5rem);
-            height: clamp(2rem, -3vw, 2.5rem);
+            opacity: 0.5;
+            transition: opacity 0.3s, transform 0.3s;
+            width: clamp(1.75rem, 4vw, 2.5rem);
+            height: clamp(1.75rem, 4vw, 2.5rem);
         }
 
         .nav-btn:hover {
             transform: translateY(-2px);
-            transition: all 0.3s;
-            opacity: 0.4;
+            opacity: 0.65;
+            color: var(--earth-hover);
         }
 
         .nav-btn.next {
@@ -238,7 +254,7 @@ const thumbnails = images;
 
         .nav-btn.next:hover {
             transform: translateY(-2px) scaleX(-1);
-            transition: all 0.3s;
+            transition: opacity 0.3s, transform 0.3s;
         }
 
         .thumbnail {
@@ -246,11 +262,8 @@ const thumbnails = images;
             height: 80px;
         }
 
-        .image-container img {
+        .image-frame {
             max-width: 95%;
-            max-height: 95%;
-            min-width: 95%;
-            min-height: 95%;
         }
     }
 </style>
@@ -259,7 +272,7 @@ const thumbnails = images;
     import type { ImageSchema } from "@/content.config";
     import { typewriter } from "@utils/utils";
 
-    document.addEventListener("astro:page-load", () => {
+    if (typeof document !== "undefined") document.addEventListener("astro:page-load", () => {
         document.querySelectorAll(".gallery-container").forEach((gallery) => {
             if (!gallery) return;
 
@@ -267,6 +280,8 @@ const thumbnails = images;
 
             let currentIndex = 0;
             let isMobile = window.innerWidth <= 767;
+            let activePreload: HTMLImageElement | null = null;
+            let isInitialLoad = true;
             const images: ImageSchema[] = JSON.parse(
                 galleryElement.dataset.images!,
             );
@@ -281,21 +296,57 @@ const thumbnails = images;
                 ) as HTMLParagraphElement;
 
             function showImage(index: number) {
-                if (index < 0 || index >= images.length) {
-                    return;
-                }
+                if (index < 0 || index >= images.length) return;
                 currentIndex = index;
-
-                const src = images[index].src;
-                const mobileVariant = images[index].mobileVariant;
-
-                img.src = isMobile && mobileVariant ? mobileVariant : src;
-                img.alt = images[index].alt;
-                imgCaption.innerHTML = images[index].caption!;
 
                 thumbnails.forEach((thumb, i) => {
                     thumb.classList.toggle("active", i === index);
                 });
+
+                if (activePreload) activePreload.onload = null;
+
+                const { src, mobileVariant, alt, caption } = images[index];
+                const newSrc = isMobile && mobileVariant ? mobileVariant : src;
+
+                if (isInitialLoad) {
+                    isInitialLoad = false;
+                    img.src = newSrc;
+                    img.alt = alt;
+                    imgCaption.innerHTML = caption ?? "";
+                    return;
+                }
+
+                const preload = new Image();
+                activePreload = preload;
+
+                let fadeComplete = false;
+                let imageReady = false;
+
+                function doSwap() {
+                    if (activePreload !== preload) return;
+                    img.src = newSrc;
+                    img.alt = alt;
+                    imgCaption.innerHTML = caption ?? "";
+                    img.style.opacity = '';
+                    activePreload = null;
+                }
+
+                setTimeout(() => {
+                    fadeComplete = true;
+                    if (imageReady) doSwap();
+                }, 150);
+
+                img.style.opacity = '0';
+
+                preload.src = newSrc;
+                if (preload.complete) {
+                    imageReady = true;
+                } else {
+                    preload.onload = () => {
+                        imageReady = true;
+                        if (fadeComplete) doSwap();
+                    };
+                }
             }
 
             function nextImage() {
@@ -309,18 +360,42 @@ const thumbnails = images;
                 showImage(newIndex);
             }
 
-            const dialog = document.querySelector(
-                `#${(gallery as HTMLElement).dataset.id}`,
-            );
+            const dialog = galleryElement.closest('dialog');
 
             dialog?.addEventListener("toggle", () => {
                 if (!(dialog as HTMLDialogElement).open) return;
                 currentIndex = 0;
+                isInitialLoad = true;
                 const dialogTitle = dialog.querySelector(
                     `.gallery-title h2`,
                 ) as HTMLElement;
                 typewriter(dialogTitle, 0);
                 showImage(currentIndex);
+            });
+
+            function triggerClose() {
+                if ((dialog as HTMLElement).classList.contains('closing')) return;
+                (dialog as HTMLElement).classList.add('closing');
+                dialog?.addEventListener('animationend', () => {
+                    (dialog as HTMLDialogElement).close();
+                    (dialog as HTMLElement).classList.remove('closing');
+                }, { once: true });
+            }
+
+            const closeBtn = dialog?.querySelector('.dialog-close') as HTMLButtonElement | null;
+            if (closeBtn) {
+                closeBtn.removeAttribute('command');
+                closeBtn.removeAttribute('commandfor');
+                closeBtn.addEventListener('click', triggerClose);
+            }
+
+            dialog?.addEventListener('cancel', (e) => {
+                e.preventDefault();
+                triggerClose();
+            });
+
+            dialog?.addEventListener("click", (e) => {
+                if (e.target === dialog) triggerClose();
             });
 
             img.addEventListener("error", () => {
@@ -337,11 +412,27 @@ const thumbnails = images;
                 thumb.addEventListener("click", () => showImage(index));
             });
 
+            const controller = new AbortController();
+            document.addEventListener("astro:before-swap", () => controller.abort(), { once: true });
+
             document.addEventListener("keydown", (e) => {
                 if (!(dialog as HTMLDialogElement).open) return;
                 if (e.key === "ArrowRight") nextImage();
                 if (e.key === "ArrowLeft") prevImage();
+            }, { signal: controller.signal });
+
+            let touchStartX = 0;
+            galleryElement.addEventListener("touchstart", (e) => {
+                touchStartX = (e as TouchEvent).touches[0].clientX;
+            }, { passive: true });
+            galleryElement.addEventListener("touchend", (e) => {
+                const diff = touchStartX - (e as TouchEvent).changedTouches[0].clientX;
+                if (Math.abs(diff) > 40) diff > 0 ? nextImage() : prevImage();
             });
+
+            window.addEventListener("resize", () => {
+                isMobile = window.innerWidth <= 767;
+            }, { signal: controller.signal });
         });
     });
 </script>

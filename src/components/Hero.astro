@@ -54,7 +54,7 @@ const mainCTA = featuredPaths[0];
     }
 
     .subtitle {
-        font-size: 1.25rem;
+        font-size: clamp(1.1rem, 3vw, 1.25rem);
         margin-bottom: 1.25rem;
         opacity: 0.8;
     }
@@ -78,7 +78,6 @@ const mainCTA = featuredPaths[0];
     .btn-primary,
     .btn-secondary {
         padding: 0.75rem 2rem;
-        border: 2px solid var(--text);
         border-radius: 0.3125rem;
         transition: all 0.3s;
         display: inline-block;
@@ -88,23 +87,31 @@ const mainCTA = featuredPaths[0];
     }
 
     .btn-primary {
-        background: var(--text);
+        background: var(--earth);
+        border: 2px solid var(--earth);
         color: var(--bg);
     }
 
     .btn-primary:hover {
-        opacity: 1;
+        background: var(--earth-hover);
+        border-color: var(--earth-hover);
         transform: translateY(-2px);
     }
 
     .btn-secondary {
         background: transparent;
+        border: 2px solid var(--border);
+        color: var(--text);
     }
 
     .btn-secondary:hover {
-        background: var(--text);
-        color: var(--bg);
-        opacity: 1;
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgb(from var(--text) r g b / 4%) 100%
+        );
+        border-color: var(--accent);
+        transform: translateY(-2px);
     }
 
     @media (min-width: 880px) {

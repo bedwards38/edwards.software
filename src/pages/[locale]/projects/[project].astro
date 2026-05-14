@@ -9,6 +9,7 @@ import H2 from "@components/content/H2.astro";
 import H3 from "@components/content/H3.astro";
 import UnorderedList from "@components/content/UnorderedList.astro";
 import ListItem from "@components/content/ListItem.astro";
+import Anchor from "@components/content/Anchor.astro";
 
 const { project, locale = "en" } = Astro.params;
 const entry: ProjectEntry = await getEntry(
@@ -44,6 +45,7 @@ const { Content } = await render(entry);
                 h3: H3,
                 ul: UnorderedList,
                 li: ListItem,
+                a: Anchor,
             }}
         />
     </ExplanationLayout>

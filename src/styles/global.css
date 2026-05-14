@@ -24,7 +24,15 @@ body:has(dialog[open]) {
 
 .cursor::after {
     content: "_";
-    animation: 1.75s blink infinite step-end;
+    animation: 1.4s blink infinite step-end;
+}
+
+.typewriter.cursor::after {
+    animation-play-state: paused;
+}
+
+.typewriter.cursor.typing-done::after {
+    animation-play-state: running;
 }
 
 @keyframes blink {

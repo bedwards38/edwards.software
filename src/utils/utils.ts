@@ -26,52 +26,53 @@ export function useTranslations(lang: keyof typeof translations) {
     key: keyof (typeof translations)[typeof defaultLocaleCode],
     index: number,
   ) {
-    return (
-      translations[lang][key]![index] ||
-      translations[defaultLocaleCode][key]![index]
-    );
+    const localArr = translations[lang][key] as string[] | undefined;
+    const defaultArr = translations[defaultLocaleCode][key] as string[] | undefined;
+    return localArr?.[index] || defaultArr?.[index];
   }
 
   return { t, tArr };
 }
 
-const typewriterTimeouts: { [K: string]: number[] } = {};
+const typewriterTimeouts = new WeakMap<HTMLElement, number[]>();
 export function typewriter(element: HTMLElement, index: number) {
   const animationSpeed = 50;
   const content = element.dataset.content!;
   if (index === 0) {
+    typewriterTimeouts.get(element)?.forEach((id) => clearTimeout(id));
     element.innerHTML = "";
-    typewriterTimeouts[content] = [];
+    typewriterTimeouts.set(element, []);
+    element.classList.remove("typing-done");
   }
 
   if (index >= 0 && index <= (content ? content.length - 1 : 0)) {
     element.innerHTML += content?.charAt(index);
-
-    typewriterTimeouts[content].push(
+    typewriterTimeouts.get(element)!.push(
       setTimeout(typewriter, animationSpeed, element, ++index),
     );
   } else {
-    typewriterTimeouts[content].forEach((id) => clearTimeout(id));
-    typewriterTimeouts[content] = [];
+    typewriterTimeouts.get(element)?.forEach((id) => clearTimeout(id));
+    typewriterTimeouts.set(element, []);
+    element.classList.add("typing-done");
   }
 }
 
-const reverseTypewriterTimeouts: { [K: string]: number[] } = {};
+const reverseTypewriterTimeouts = new WeakMap<HTMLElement, number[]>();
 export function reverseTypewriter(element: HTMLElement, index: number) {
   const animationSpeed = 35;
   const content = element.dataset.reverse!;
   if (index === content.length - 1) {
-    reverseTypewriterTimeouts[content] = [];
+    reverseTypewriterTimeouts.set(element, []);
   }
 
   if (index >= 0 && index <= (content ? content.length - 1 : 0)) {
     element.innerHTML = element.innerHTML.substring(0, index);
-    reverseTypewriterTimeouts[content].push(
+    reverseTypewriterTimeouts.get(element)!.push(
       setTimeout(reverseTypewriter, animationSpeed, element, --index),
     );
   } else {
-    reverseTypewriterTimeouts[content].forEach((id) => clearTimeout(id));
-    reverseTypewriterTimeouts[content] = [];
+    reverseTypewriterTimeouts.get(element)?.forEach((id) => clearTimeout(id));
+    reverseTypewriterTimeouts.set(element, []);
     typewriter(element, 0);
   }
 }

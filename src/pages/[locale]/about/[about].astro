@@ -9,6 +9,7 @@ import H2 from "@components/content/H2.astro";
 import H3 from "@components/content/H3.astro";
 import UnorderedList from "@components/content/UnorderedList.astro";
 import ListItem from "@components/content/ListItem.astro";
+import Anchor from "@components/content/Anchor.astro";
 
 const { about, locale = "en" } = Astro.params;
 const entry: AboutEntry = await getEntry("about", `${locale}/about/${about}`)!;
@@ -19,8 +20,8 @@ const { Content } = await render(entry);
 ---
 
 <Layout
-    title={`${t("site.experience.title")}/${about} | ${t("site.title")}`}
-    description={t("site.experience.description")}
+    title={`${t("site.about.title")}/${about} | ${t("site.title")}`}
+    description={t("site.about.description")}
     prompt={t("page.about-education.prompt")}
     image="/images/opengraph/about-explanation.png"
     breadcrumbs={[{ path: `/${locale}/about`, name: t("site.about.title") }]}
@@ -35,6 +36,7 @@ const { Content } = await render(entry);
                 h3: H3,
                 ul: UnorderedList,
                 li: ListItem,
+                a: Anchor,
             }}
         />
     </ExplanationLayout>
