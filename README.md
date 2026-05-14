@@ -1,6 +1,5 @@
 # edwards.software
 
-![Home Page](https://github.com/bedwards38/edwards.software/blob/main/public/images/opengraph/index-dark.png)
 
 [`edwards.software`](https://edwards.software) acts as my "portfolio", "curriculam vitae", "extended-form resume", or whatever else you'd like to call it. Simply put, I just wanted a place to showcase my personal projects and professional experience to anyone that might be interested: family, friends, colleagues, recruiters, hiring managers, you get the gist.
 
