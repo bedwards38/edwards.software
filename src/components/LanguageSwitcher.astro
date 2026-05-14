@@ -23,7 +23,7 @@ const { t } = useTranslations(locale);
         {
             locales &&
                 locales.map((definedLocale) => (
-                    <div class="option">
+                    <div class={`option ${definedLocale.code === locale ? "active-option" : ""}`}>
                         <span
                             data-value={definedLocale.code}
                             class={`option-text mono ${definedLocale.code === locale ? "active-locale" : ""}`}
@@ -49,6 +49,7 @@ const { t } = useTranslations(locale);
 
     #locale-switch:hover,
     #locale-switch.active {
+        color: var(--earth-hover);
         transform: translateY(-2px);
     }
 
@@ -75,26 +76,37 @@ const { t } = useTranslations(locale);
         border: 1px solid var(--border);
         border-radius: 0.3125rem;
         padding: 0.5rem;
+        transition: border-color 0.3s;
+    }
+
+    .option:not(.active-option):hover {
+        border-color: var(--earth);
     }
 
     .option-text {
         color: var(--text);
-        opacity: 0.2;
+        opacity: 0.3;
         cursor: pointer;
         transition: all 0.3s;
     }
 
     .option-text.active-locale {
-        opacity: 0.4;
-    }
-
-    .option-text:hover {
-        transition: opacity 0.3s;
-        opacity: 0.4;
-    }
-
-    .option-text.active-locale {
+        color: var(--earth);
+        opacity: 0.75;
         cursor: default;
+    }
+
+    .option.active-option {
+        border-color: color-mix(in srgb, var(--earth) 50%, var(--border));
+    }
+
+    .option:not(.active-option) {
+        cursor: pointer;
+    }
+
+    .option:not(.active-option):hover .option-text {
+        color: var(--earth);
+        opacity: 0.6;
     }
 
     @media (min-width: 880px) {

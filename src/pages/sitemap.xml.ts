@@ -23,48 +23,50 @@ export const GET: APIRoute = async ({ site }) => {
   }
 
   const baseUrl = site.origin;
-  const lastMod = "2026-04-13";
+  const lastMod = import.meta.env.BUILD_DATE as string;
   const pages: Page[] = [];
 
-  locales.forEach(async (locale) => {
-    const projects = (await getCollection("projects")).filter(
-      (project: ProjectEntry) => project.id.startsWith(`${locale}/`),
-    );
-    const experience = (await getCollection("experience")).filter(
-      (position: ExperienceEntry) => position.id.startsWith(`${locale}/`),
-    );
-    const paths = [
-      "",
-      "/about",
-      "/about/education",
-      "/projects",
-      "/experience",
-    ].concat(
-      projects.flatMap((project) => {
-        const id = project.id;
-        return `/${id.substring(id.indexOf("/"))}`;
-      }),
-      experience.flatMap((position) => {
-        const id = position.id;
-        return `/${id.substring(id.indexOf("/"))}`;
-      }),
-    );
+  await Promise.all(
+    locales.map(async (locale) => {
+      const projects = (await getCollection("projects")).filter(
+        (project: ProjectEntry) => project.id.startsWith(`${locale.code}/`),
+      );
+      const experience = (await getCollection("experience")).filter(
+        (position: ExperienceEntry) => position.id.startsWith(`${locale.code}/`),
+      );
+      const paths = [
+        "",
+        "/about",
+        "/about/education",
+        "/projects",
+        "/experience",
+      ].concat(
+        projects.flatMap((project) => {
+          const id = project.id;
+          return `/${id.substring(id.indexOf("/"))}`;
+        }),
+        experience.flatMap((position) => {
+          const id = position.id;
+          return `/${id.substring(id.indexOf("/"))}`;
+        }),
+      );
 
-    paths.forEach((path) => {
-      pages.push({
-        url: `/${locale}${path}`,
-        lastmod: lastMod,
-        changefreq: "monthly",
-        priority: "1.0",
-        locale: `${locale}`,
-        alternates: locales
-          .filter((altLocale) => locale !== altLocale)
-          .map((altLocale) => {
-            return { url: `/${altLocale.code}${path}`, locale: altLocale.code };
-          }),
+      paths.forEach((path) => {
+        pages.push({
+          url: `/${locale.code}${path}`,
+          lastmod: lastMod,
+          changefreq: "monthly",
+          priority: "1.0",
+          locale: locale.code,
+          alternates: locales
+            .filter((altLocale) => altLocale.code !== locale.code)
+            .map((altLocale) => {
+              return { url: `/${altLocale.code}${path}`, locale: altLocale.code };
+            }),
+        });
       });
-    });
-  });
+    }),
+  );
 
   const sitemap = `
     <?xml version="1.0" encoding="UTF-8"?>
@@ -78,9 +80,7 @@ export const GET: APIRoute = async ({ site }) => {
           <lastmod>${page.lastmod}</lastmod>
           <changefreq>${page.changefreq}</changefreq>
           <priority>${page.priority}</priority>
-          ${page.alternates.forEach((alternate) => {
-            `<xhtml:link rel="alternate" hreflang="${alternate.locale}" href="${baseUrl}${alternate.url}" />`;
-          })}
+          ${page.alternates.map((alternate) => `<xhtml:link rel="alternate" hreflang="${alternate.locale}" href="${baseUrl}${alternate.url}" />`).join("\n          ")}
         </url>`,
       )
       .join("\n")}

@@ -92,13 +92,19 @@ const linkedData = {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-            { path: `/${locale}`, name: "~/" },
-            breadcrumbs?.map((breadcrumb) => {
-                return {
+            {
+                "@type": "ListItem",
+                position: 1,
+                item: { "@id": new URL(`/${locale}`, Astro.site).href, name: "~/" },
+            },
+            ...(breadcrumbs?.map((breadcrumb, index) => ({
+                "@type": "ListItem",
+                position: index + 2,
+                item: {
                     "@id": new URL(breadcrumb.path, Astro.site).href,
                     name: breadcrumb.name,
-                };
-            }),
+                },
+            })) ?? []),
         ],
     },
     inLanguage: {
@@ -218,14 +224,19 @@ const linkedData = {
 
         document.addEventListener("astro:page-load", () => {
             const typewriterContent = document.querySelectorAll(".typewriter");
+            const isTransition = document.querySelector(".terminal-container")?.classList.contains("no-spawn");
+            const delay = isTransition ? 220 : 0;
 
-            typewriterContent.forEach((content: Element) => {
-                typewriter(content as HTMLElement, 0);
-            });
+            setTimeout(() => {
+                typewriterContent.forEach((content: Element) => {
+                    typewriter(content as HTMLElement, 0);
+                });
+            }, delay);
         });
 
         document.addEventListener("astro:before-swap", () => {
             localStorage.setItem("prevUri", document.location.pathname);
         });
+
     </script>
 </html>

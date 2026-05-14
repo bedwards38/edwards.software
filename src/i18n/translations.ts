@@ -50,9 +50,6 @@ export interface Translations {
 
   // Hero Component
   "hero.cta"?: string[];
-  "hero.cta[0]"?: string;
-  "hero.cta[1]"?: string;
-  "hero.cta[2]"?: string;
 
   // Card Component
   "card.featured"?: string;
@@ -129,9 +126,6 @@ export const translations: Record<string, Translations> = {
     "locale.label.spanish": "Spanish",
     "locale.label.german": "German",
     "hero.cta": ["cd ~/about", "cd ~/projects", "cd ~/experience"],
-    "hero.cta[0]": "cd ~/about",
-    "hero.cta[1]": "cd ~/projects",
-    "hero.cta[2]": "cd ~/experience",
     "card.featured": "PINNED",
     "card.prototype": "PROTOTYPE",
     "card.button.description": "explore",
@@ -175,15 +169,12 @@ export const translations: Record<string, Translations> = {
     "site.404.description": "Página no encontrada para edwards.software",
     "button.link.back": "Volver",
     "button.toggle.theme": "Cambiar Tema",
-    "button.switch.locale": "Lenguaje de Brujas",
+    "button.switch.locale": "Cambiar Idioma",
     "locale.label.english": "Inglés",
     "locale.label.spanish": "Español",
     "locale.label.german": "Alemán",
     "hero.cta": ["cd ~/sobre", "cd ~/proyectos", "cd ~/experiencia"],
-    "hero.cta[0]": "cd ~/sobre",
-    "hero.cta[1]": "cd ~/proyectos",
-    "hero.cta[2]": "cd ~/experiencia",
-    "card.featured": "PINNED",
+    "card.featured": "FIJADO",
     "card.prototype": "PROTOTIPO",
     "card.button.description": "explorar",
     "explanation.button.link": "[enlace]",
@@ -197,12 +188,15 @@ export const translations: Record<string, Translations> = {
     "page.about.prompt": "[~/sobre]$ ./identificar",
     "page.about.education.title": "Historial de Educación",
     "page.about-education.prompt": "[~/sobre/educación]$ ./explicar",
-    "page.projects.title": "Historial del Proyectos",
+    "page.projects.title": "Historial de Proyectos",
     "page.projects.prompt": "[~/proyectos]$ ./historia",
     "page.projects.filter.command": "ls -C tecnologías/",
     "page.experience.title": "Historial de Experiencias",
     "page.experience.prompt": "[~/experiencia]$ ./historia",
     "page.experience.filter.command": "ls -C tecnologías/",
+    "page.project-explanation.prompt": "[~/proyectos/${project}]$ ./explicar",
+    "page.experience-explanation.prompt":
+      "[~/experiencia/${experience}]$ ./explicar",
   },
   de: {
     "site.description":
@@ -218,15 +212,12 @@ export const translations: Record<string, Translations> = {
     "site.404.description": "Seite für edwards.software nicht gefunden",
     "button.link.back": "Geh Zurück",
     "button.toggle.theme": "Design Ändern",
-    "dialog.label": "Diálog",
+    "dialog.label": "Dialog",
     "button.switch.locale": "Sprache Wechseln",
     "locale.label.english": "Englisch",
     "locale.label.spanish": "Spanisch",
     "locale.label.german": "Deutsch",
     "hero.cta": ["cd ~/um", "cd ~/projekte", "cd ~/erfahrung"],
-    "hero.cta[0]": "cd ~/um",
-    "hero.cta[1]": "cd ~/projekte",
-    "hero.cta[2]": "cd ~/erfahrung",
     "card.featured": "STECKEN",
     "card.prototype": "PROTOTYP",
     "card.button.description": "erkunden",
@@ -246,5 +237,8 @@ export const translations: Record<string, Translations> = {
     "page.experience.title": "Beruflicher Werdegang",
     "page.experience.prompt": "[~/erfahrung]$ ./historie",
     "page.experience.filter.command": "ls -C technologien/",
+    "page.project-explanation.prompt": "[~/projekte/${project}]$ ./erklären",
+    "page.experience-explanation.prompt":
+      "[~/erfahrung/${experience}]$ ./erklären",
   },
 };

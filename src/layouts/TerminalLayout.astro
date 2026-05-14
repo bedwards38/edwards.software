@@ -73,11 +73,15 @@ const isHome =
     import { navigate } from "astro:transitions/client";
     import { getLocaleFromUrl } from "@utils/utils";
 
+    document.addEventListener("astro:after-swap", () => {
+        document.querySelector(".terminal-container")?.classList.add("no-spawn");
+    });
+
     document.addEventListener("astro:page-load", () => {
         const locale = getLocaleFromUrl(new URL(window.location.href));
         document
             .querySelector(".terminal-title")
-            ?.addEventListener("click", () => navigate(`/${locale}`));
+            ?.addEventListener("click", () => navigate(`/${locale}`), { once: true });
     });
 </script>
 <style>
@@ -90,10 +94,27 @@ const isHome =
         align-items: center;
     }
 
+    @keyframes windowSpawn {
+        from {
+            opacity: 0;
+            transform: scale(0.94);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
     .terminal-container {
         border: 2px solid var(--border);
         border-radius: 0.625rem;
         max-width: 100%;
+        animation: windowSpawn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        view-transition-name: terminal-window;
+    }
+
+    .terminal-container.no-spawn {
+        animation: none;
     }
 
     .terminal-header {
@@ -102,6 +123,8 @@ const isHome =
         grid-template-areas: "controls title settings";
         width: 100%;
         border-bottom: 2px solid var(--border);
+        position: relative;
+        z-index: 1;
     }
 
     .terminal-controls {
@@ -114,6 +137,8 @@ const isHome =
     }
 
     .window-btns {
+        display: flex;
+        align-items: center;
         gap: 0.5rem;
         cursor: default;
     }
@@ -155,7 +180,7 @@ const isHome =
         justify-content: end;
         align-items: center;
         gap: 0.75rem;
-        padding: 0.35rem 0.65rem 0rem 0.65rem;
+        padding: 0.65rem;
     }
 
     .back-btn-left {
@@ -170,7 +195,6 @@ const isHome =
         opacity: 0.2;
     }
 
-    .title:hover,
     .back-btn-left:hover,
     .back-btn-right:hover,
     .translate-btn:hover,
@@ -178,6 +202,13 @@ const isHome =
     .theme-toggle:hover {
         transition: opacity 0.3s;
         opacity: 0.4;
+    }
+
+    .terminal-title:hover .logo,
+    .terminal-title:hover .title {
+        color: var(--earth-hover);
+        opacity: 0.6;
+        transition: color 0.3s, opacity 0.3s;
     }
 
     .back-btn-left {
@@ -214,6 +245,46 @@ const isHome =
         min-height: 55vh;
     }
 
+    @media (width < 1100px) {
+        .terminal-header {
+            view-transition-name: terminal-header;
+        }
+    }
+
+    [data-theme="dark"] .circle {
+        opacity: 0.25;
+    }
+
+    [data-theme="dark"] .logo,
+    [data-theme="dark"] .title {
+        opacity: 0.4;
+    }
+
+    [data-theme="dark"] .back-btn-left,
+    [data-theme="dark"] .back-btn-right,
+    [data-theme="dark"] .translate-btn,
+    [data-theme="dark"] .theme-toggle {
+        opacity: 0.4;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) .circle {
+            opacity: 0.25;
+        }
+
+        :root:not([data-theme="light"]) .logo,
+        :root:not([data-theme="light"]) .title {
+            opacity: 0.4;
+        }
+
+        :root:not([data-theme="light"]) .back-btn-left,
+        :root:not([data-theme="light"]) .back-btn-right,
+        :root:not([data-theme="light"]) .translate-btn,
+        :root:not([data-theme="light"]) .theme-toggle {
+            opacity: 0.4;
+        }
+    }
+
     @media (min-width: 880px) {
         .container {
             padding: 3rem 2rem 0rem;
@@ -240,21 +311,12 @@ const isHome =
             display: flex;
         }
 
-        .logo {
-            display: none;
-        }
-
         .theme-toggle {
             transform: scaleX(-1);
         }
 
         .theme-toggle:hover {
             transform: none;
-        }
-
-        .title {
-            display: inherit;
-            font-size: clamp(0.65em, 1vw, 0.925rem);
         }
 
         .terminal-prompt {
@@ -265,6 +327,18 @@ const isHome =
             min-width: 80%;
             max-height: 72vh;
             min-height: unset;
+        }
+
+    }
+
+    @media (width >= 1100px) {
+        .logo {
+            display: none;
+        }
+
+        .title {
+            display: inherit;
+            font-size: clamp(0.875rem, 1.2vw, 0.925rem);
         }
     }
 </style>

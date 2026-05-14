@@ -35,9 +35,6 @@ const projects = (await getCollection("projects"))
     description={t("site.projects.description")}
     prompt={t("page.projects.prompt")}
     image="/images/opengraph/projects.png"
-    breadcrumbs={projects.map((project) => {
-        return { path: `/${project.id}`, name: project.data.title };
-    })}
     locale={locale}
     prevPath={`/${locale}`}
 >

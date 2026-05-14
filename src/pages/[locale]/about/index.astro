@@ -24,12 +24,6 @@ const education: AboutEntry = await getEntry(
     description={t("site.about.description")}
     prompt={t("page.about.prompt")}
     image="/images/opengraph/about.png"
-    breadcrumbs={[
-        {
-            path: `/${locale}/about/education`,
-            name: education.data.title,
-        },
-    ]}
     locale={locale}
     prevPath={`/${locale}`}
 >
@@ -45,13 +39,11 @@ const education: AboutEntry = await getEntry(
                         </h2>
                     </div>
                 </div>
+                <hr class="about-divider" />
                 <div class="about-grid">
+                    <hr class="about-divider-inner" />
                     <div class="about-text">
-                        <Card
-                            featured={aboutMe.data.featured}
-                            subtitle={aboutMe.data.description}
-                            locale={locale}
-                        />
+                        <p class="about-description mono" set:html={aboutMe.data.description} />
                     </div>
                     <div class="about-image-grid fade-in">
                         {
@@ -98,6 +90,25 @@ const education: AboutEntry = await getEntry(
 </Layout>
 
 <style>
+    .about-description {
+        opacity: 0.8;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin: 1rem 0;
+        text-align: justify;
+        hyphens: auto;
+    }
+
+    .about-divider {
+        display: none;
+    }
+
+    .about-divider-inner {
+        grid-area: divider;
+        margin: 0;
+        opacity: 0.4;
+    }
+
     .about-me {
         padding: 0rem 0;
     }
@@ -120,12 +131,14 @@ const education: AboutEntry = await getEntry(
         grid-template-columns: 1fr;
         grid-template-areas:
             "images"
+            "divider"
             "content";
     }
 
     .about-text {
         grid-area: content;
         opacity: 0.7;
+        margin-top: -1rem;
     }
 
     .about-image-grid {
@@ -169,13 +182,14 @@ const education: AboutEntry = await getEntry(
     }
 
     @media (min-width: 880px) {
-        .card {
-            text-align: justify;
+        .about-description {
+            hyphens: none;
         }
 
         .about-header {
             margin-top: 2rem;
         }
+
     }
 
     @media (width >= 510px) and (width <= 1276px) {
@@ -184,12 +198,40 @@ const education: AboutEntry = await getEntry(
                 "content"
                 "images";
         }
+
+        .about-divider-inner {
+            display: none;
+        }
     }
 
     @media (width >= 1276px) {
+        .about-divider {
+            display: block;
+            border: none;
+            height: 2px;
+            margin-left: 2rem;
+            opacity: 1;
+            background: linear-gradient(to right, rgb(from var(--earth) r g b / 40%), transparent 55%);
+        }
+
+        .about-divider-inner {
+            display: none;
+        }
+
         .about-grid {
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 3fr 2fr;
             grid-template-areas: "content images";
+        }
+
+        .about-header {
+            padding-left: 2rem;
+        }
+
+        .about-text {
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            margin-top: 0;
         }
     }
 
